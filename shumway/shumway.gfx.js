@@ -18,9 +18,25 @@
 console.time('Load Shared Dependencies');
 var Shumway;
 (function (Shumway) {
-    Shumway.version = '0.11.622';
-    Shumway.build = '16451d8';
+    Shumway.version = '0.11.688';
+    Shumway.build = 'b682a7c39';
 }(Shumway || (Shumway = {})));
+var __extends = this && this.__extends || function () {
+    var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+        d.__proto__ = b;
+    } || function (d, b) {
+        for (var p in b)
+            if (b.hasOwnProperty(p))
+                d[p] = b[p];
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+}();
 /*
  * Copyright 2014 Mozilla Foundation
  *
@@ -36,19 +52,18 @@ var Shumway;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='references.ts' />
 var jsGlobal = function () {
     return this || (1, eval)('this//# sourceURL=jsGlobal-getter');
 }();
 // Our polyfills for some DOM things make testing this slightly more onerous than it ought to be.
 var inBrowser = typeof window !== 'undefined' && 'document' in window && 'plugins' in window.document;
 var inFirefox = typeof navigator !== 'undefined' && navigator.userAgent.indexOf('Firefox') >= 0;
-// declare var print;
-// declare var console;
-// declare var performance;
-// declare var XMLHttpRequest;
-// declare var document;
-// declare var getComputedStyle;
+// declare let print;
+// declare let console;
+// declare let performance;
+// declare let XMLHttpRequest;
+// declare let document;
+// declare let getComputedStyle;
 /** @define {boolean} */
 var release = false;
 /** @define {boolean} */
@@ -69,6 +84,19 @@ if (!jsGlobal.performance.now) {
 var START_TIME = performance.now();
 var Shumway;
 (function (Shumway) {
+    var CharacterCodes;
+    (function (CharacterCodes) {
+        CharacterCodes[CharacterCodes['_0'] = 48] = '_0';
+        CharacterCodes[CharacterCodes['_1'] = 49] = '_1';
+        CharacterCodes[CharacterCodes['_2'] = 50] = '_2';
+        CharacterCodes[CharacterCodes['_3'] = 51] = '_3';
+        CharacterCodes[CharacterCodes['_4'] = 52] = '_4';
+        CharacterCodes[CharacterCodes['_5'] = 53] = '_5';
+        CharacterCodes[CharacterCodes['_6'] = 54] = '_6';
+        CharacterCodes[CharacterCodes['_7'] = 55] = '_7';
+        CharacterCodes[CharacterCodes['_8'] = 56] = '_8';
+        CharacterCodes[CharacterCodes['_9'] = 57] = '_9';
+    }(CharacterCodes = Shumway.CharacterCodes || (Shumway.CharacterCodes = {})));
     /**
      * The buffer length required to contain any unsigned 32-bit integer.
      */
@@ -205,7 +233,7 @@ var Shumway;
         for (var i = 0; i < args.length; i++) {
             var arg = args[i];
             try {
-                var argStr;
+                var argStr = void 0;
                 if (typeof arg !== 'object' || !arg) {
                     argStr = arg + '';
                 } else if ('toString' in arg) {
@@ -725,7 +753,8 @@ var Shumway;
                     }
                     var code = b1 & (1 << validBits) - 1;
                     var invalid = false;
-                    for (var i = 5; i >= validBits; --i) {
+                    var i = void 0;
+                    for (i = 5; i >= validBits; --i) {
                         var bi = bytes[j++];
                         if ((bi & 192) != 128) {
                             // Invalid UTF8 character sequence
@@ -973,6 +1002,7 @@ var Shumway;
                 return 63;
             }
             release || assert(false, 'Invalid Encoding');
+            return 0;
         }
         StringUtilities.fromEncoding = fromEncoding;
         function variableLengthDecodeInt32(s) {
@@ -1219,7 +1249,7 @@ var Shumway;
                 for (j = 0; j < 16; ++j, i += 4) {
                     w[j] = padded[i] | padded[i + 1] << 8 | padded[i + 2] << 16 | padded[i + 3] << 24;
                 }
-                var a = h0, b = h1, c = h2, d = h3, f, g;
+                var a = h0, b = h1, c = h2, d = h3, f = void 0, g = void 0;
                 for (j = 0; j < 64; ++j) {
                     if (j < 16) {
                         f = b & c | ~b & d;
@@ -1359,7 +1389,6 @@ var Shumway;
         function WeakMap() {
             this.id = '$weakmap' + id++;
         }
-        ;
         WeakMap.prototype = {
             has: function (obj) {
                 return obj.hasOwnProperty(this.id);
@@ -1394,7 +1423,7 @@ var Shumway;
         }
         WeakList.prototype.clear = function () {
             if (this._map) {
-                this._map.clear();
+                this._map = new WeakMap();
             } else {
                 this._list.length = 0;
             }
@@ -1426,12 +1455,12 @@ var Shumway;
             if (this._map) {
                 var newAdditionsToKeys = [];
                 this._newAdditions.push(newAdditionsToKeys);
-                var map = this._map;
-                var keys = ShumwayCom.getWeakMapKeys(map);
+                var map_1 = this._map;
+                var keys = ShumwayCom.getWeakMapKeys(map_1);
                 // The keys returned by ShumwayCom.getWeakMapKeys are not guaranteed to
                 // be in insertion order. Therefore we have to sort them manually.
                 keys.sort(function (a, b) {
-                    return map.get(a) - map.get(b);
+                    return map_1.get(a) - map_1.get(b);
                 });
                 keys.forEach(function (value) {
                     if (value._referenceCount !== 0) {
@@ -1532,6 +1561,12 @@ var Shumway;
         }
         NumberUtilities.epsilonEquals = epsilonEquals;
     }(NumberUtilities = Shumway.NumberUtilities || (Shumway.NumberUtilities = {})));
+    var Numbers;
+    (function (Numbers) {
+        Numbers[Numbers['MaxU16'] = 65535] = 'MaxU16';
+        Numbers[Numbers['MaxI16'] = 32767] = 'MaxI16';
+        Numbers[Numbers['MinI16'] = -32768] = 'MinI16';
+    }(Numbers = Shumway.Numbers || (Shumway.Numbers = {})));
     var IntegerUtilities;
     (function (IntegerUtilities) {
         var sharedBuffer = new ArrayBuffer(8);
@@ -1617,9 +1652,9 @@ var Shumway;
         IntegerUtilities.trailingZeros = trailingZeros;
         function getFlags(i, flags) {
             var str = '';
-            for (var i = 0; i < flags.length; i++) {
-                if (i & 1 << i) {
-                    str += flags[i] + ' ';
+            for (var i_1 = 0; i_1 < flags.length; i_1++) {
+                if ((i_1 & 1 << i_1) !== 0) {
+                    str += flags[i_1] + ' ';
                 }
             }
             if (str.length === 0) {
@@ -1653,7 +1688,7 @@ var Shumway;
         }
         IntegerUtilities.roundToMultipleOfPowerOfTwo = roundToMultipleOfPowerOfTwo;
         function toHEX(i) {
-            var i = i < 0 ? 4294967295 + i + 1 : i;
+            i = i < 0 ? 4294967295 + i + 1 : i;
             return '0x' + ('00000000' + i.toString(16)).substr(-8);
         }
         IntegerUtilities.toHEX = toHEX;
@@ -1685,6 +1720,15 @@ var Shumway;
             };
         }
     }(IntegerUtilities = Shumway.IntegerUtilities || (Shumway.IntegerUtilities = {})));
+    var LogLevel;
+    (function (LogLevel) {
+        LogLevel[LogLevel['Error'] = 1] = 'Error';
+        LogLevel[LogLevel['Warn'] = 2] = 'Warn';
+        LogLevel[LogLevel['Debug'] = 4] = 'Debug';
+        LogLevel[LogLevel['Log'] = 8] = 'Log';
+        LogLevel[LogLevel['Info'] = 16] = 'Info';
+        LogLevel[LogLevel['All'] = 31] = 'All';
+    }(LogLevel = Shumway.LogLevel || (Shumway.LogLevel = {})));
     var IndentingWriter = function () {
         function IndentingWriter(suppressOutput, out) {
             if (suppressOutput === void 0) {
@@ -1865,6 +1909,12 @@ var Shumway;
                 this.writeLn(number + prefix + arr[i]);
             }
         };
+        // public static PURPLE = '\033[94m';
+        // public static YELLOW = '\033[93m';
+        // public static GREEN = '\033[92m';
+        // public static RED = '\033[91m';
+        // public static BOLD_RED = '\033[1;91m';
+        // public static ENDC = '\033[0m';
         IndentingWriter.PURPLE = '\x1B[94m';
         IndentingWriter.YELLOW = '\x1B[93m';
         IndentingWriter.GREEN = '\x1B[92m';
@@ -2593,7 +2643,9 @@ var Shumway;
             } else if (sourceFormat === ImageType.StraightAlphaRGBA && targetFormat === ImageType.PremultipliedAlphaARGB) {
                 for (var i = 0; i < length; i++) {
                     var uABGR = source[i];
-                    var uARGB = uABGR & 4278255360 | uABGR >> 16 & 255 | (uABGR & 255) << 16;
+                    var uARGB = uABGR & 4278255360 | // A_G_
+                    uABGR >> 16 & 255 | // A_GB
+                    (uABGR & 255) << 16;
                     // ARGR
                     target[i] = swap32(premultiplyARGB(uARGB));
                 }
@@ -2684,15 +2736,42 @@ var Shumway;
     Shumway.ArrayBufferPool = ArrayBufferPool;
     var Telemetry;
     (function (Telemetry) {
-        Telemetry.instance;
+        var Feature;
+        (function (Feature) {
+            Feature[Feature['EXTERNAL_INTERFACE_FEATURE'] = 1] = 'EXTERNAL_INTERFACE_FEATURE';
+            Feature[Feature['CLIPBOARD_FEATURE'] = 2] = 'CLIPBOARD_FEATURE';
+            Feature[Feature['SHAREDOBJECT_FEATURE'] = 3] = 'SHAREDOBJECT_FEATURE';
+            Feature[Feature['VIDEO_FEATURE'] = 4] = 'VIDEO_FEATURE';
+            Feature[Feature['SOUND_FEATURE'] = 5] = 'SOUND_FEATURE';
+            Feature[Feature['NETCONNECTION_FEATURE'] = 6] = 'NETCONNECTION_FEATURE';
+        }(Feature = Telemetry.Feature || (Telemetry.Feature = {})));
+        var ErrorTypes;
+        (function (ErrorTypes) {
+            ErrorTypes[ErrorTypes['AVM1_ERROR'] = 1] = 'AVM1_ERROR';
+            ErrorTypes[ErrorTypes['AVM2_ERROR'] = 2] = 'AVM2_ERROR';
+        }(ErrorTypes = Telemetry.ErrorTypes || (Telemetry.ErrorTypes = {})));
+        var LoadResource;
+        (function (LoadResource) {
+            LoadResource[LoadResource['LoadSource'] = 0] = 'LoadSource';
+            LoadResource[LoadResource['LoadWhitelistAllowed'] = 1] = 'LoadWhitelistAllowed';
+            LoadResource[LoadResource['LoadWhitelistDenied'] = 2] = 'LoadWhitelistDenied';
+            LoadResource[LoadResource['StreamAllowed'] = 3] = 'StreamAllowed';
+            LoadResource[LoadResource['StreamDenied'] = 4] = 'StreamDenied';
+            LoadResource[LoadResource['StreamCrossdomain'] = 5] = 'StreamCrossdomain';
+        }(LoadResource = Telemetry.LoadResource || (Telemetry.LoadResource = {})));
     }(Telemetry = Shumway.Telemetry || (Shumway.Telemetry = {})));
     var FileLoadingService;
     (function (FileLoadingService) {
-        FileLoadingService.instance;
     }(FileLoadingService = Shumway.FileLoadingService || (Shumway.FileLoadingService = {})));
+    var SystemResourceId;
+    (function (SystemResourceId) {
+        SystemResourceId[SystemResourceId['BuiltinAbc'] = 0] = 'BuiltinAbc';
+        SystemResourceId[SystemResourceId['PlayerglobalAbcs'] = 1] = 'PlayerglobalAbcs';
+        SystemResourceId[SystemResourceId['PlayerglobalManifest'] = 2] = 'PlayerglobalManifest';
+        SystemResourceId[SystemResourceId['ShellAbc'] = 3] = 'ShellAbc';
+    }(SystemResourceId = Shumway.SystemResourceId || (Shumway.SystemResourceId = {})));
     var SystemResourcesLoadingService;
     (function (SystemResourcesLoadingService) {
-        SystemResourcesLoadingService.instance;
     }(SystemResourcesLoadingService = Shumway.SystemResourcesLoadingService || (Shumway.SystemResourcesLoadingService = {})));
     function registerCSSFont(id, data, forceFontInit) {
         if (!inBrowser) {
@@ -2739,9 +2818,20 @@ var Shumway;
             }
         };
     }(ExternalInterfaceService = Shumway.ExternalInterfaceService || (Shumway.ExternalInterfaceService = {})));
+    var LocalConnectionConnectResult;
+    (function (LocalConnectionConnectResult) {
+        LocalConnectionConnectResult[LocalConnectionConnectResult['InvalidCallback'] = -3] = 'InvalidCallback';
+        LocalConnectionConnectResult[LocalConnectionConnectResult['AlreadyTaken'] = -2] = 'AlreadyTaken';
+        LocalConnectionConnectResult[LocalConnectionConnectResult['InvalidName'] = -1] = 'InvalidName';
+        LocalConnectionConnectResult[LocalConnectionConnectResult['Success'] = 0] = 'Success';
+    }(LocalConnectionConnectResult = Shumway.LocalConnectionConnectResult || (Shumway.LocalConnectionConnectResult = {})));
+    var LocalConnectionCloseResult;
+    (function (LocalConnectionCloseResult) {
+        LocalConnectionCloseResult[LocalConnectionCloseResult['NotConnected'] = -1] = 'NotConnected';
+        LocalConnectionCloseResult[LocalConnectionCloseResult['Success'] = 0] = 'Success';
+    }(LocalConnectionCloseResult = Shumway.LocalConnectionCloseResult || (Shumway.LocalConnectionCloseResult = {})));
     var LocalConnectionService;
     (function (LocalConnectionService) {
-        LocalConnectionService.instance;
     }(LocalConnectionService = Shumway.LocalConnectionService || (Shumway.LocalConnectionService = {})));
     var ClipboardService;
     (function (ClipboardService) {
@@ -2783,7 +2873,7 @@ var Shumway;
                 this._queues[type] = null;
             }
         };
-        Callback.prototype.notify = function (type, args) {
+        Callback.prototype.notify = function (type, args_) {
             var queue = this._queues[type];
             if (!queue) {
                 return;
@@ -2809,6 +2899,7 @@ var Shumway;
         return Callback;
     }();
     Shumway.Callback = Callback;
+    var ImageType;
     (function (ImageType) {
         ImageType[ImageType['None'] = 0] = 'None';
         /**
@@ -2826,8 +2917,7 @@ var Shumway;
         ImageType[ImageType['JPEG'] = 4] = 'JPEG';
         ImageType[ImageType['PNG'] = 5] = 'PNG';
         ImageType[ImageType['GIF'] = 6] = 'GIF';
-    }(Shumway.ImageType || (Shumway.ImageType = {})));
-    var ImageType = Shumway.ImageType;
+    }(ImageType = Shumway.ImageType || (Shumway.ImageType = {})));
     function getMIMETypeForImageType(type) {
         switch (type) {
         case ImageType.JPEG:
@@ -2849,12 +2939,16 @@ var Shumway;
         function toCSSCursor(mouseCursor) {
             switch (mouseCursor) {
             case 0:
+                // MouseCursor.AUTO
                 return 'auto';
             case 2:
+                // MouseCursor.BUTTON
                 return 'pointer';
             case 3:
+                // MouseCursor.HAND
                 return 'grab';
             case 4:
+                // MouseCursor.IBEAM
                 return 'text';
             case 1:
             // MouseCursor.ARROW
@@ -2965,19 +3059,19 @@ if (typeof exports !== 'undefined') {
  * Options are configuration settings sprinkled throughout the code. They can be grouped into sets of
  * options called |OptionSets| which can form a hierarchy of options. For instance:
  *
- * var set = new OptionSet();
- * var opt = set.register(new Option("v", "verbose", "boolean", false, "Enables verbose logging."));
+ * let set = new OptionSet();
+ * let opt = set.register(new Option("v", "verbose", "boolean", false, "Enables verbose logging."));
  *
  * creates an option set with one option in it. The option can be changed directly using |opt.value = true| or
  * automatically using the |ArgumentParser|:
  *
- * var parser = new ArgumentParser();
+ * let parser = new ArgumentParser();
  * parser.addBoundOptionSet(set);
  * parser.parse(["-v"]);
  *
  * The |ArgumentParser| can also be used directly:
  *
- * var parser = new ArgumentParser();
+ * let parser = new ArgumentParser();
  * argumentParser.addArgument("h", "help", "boolean", {parse: function (x) {
  *   printUsage();
  * }});
@@ -3310,8 +3404,8 @@ var Shumway;
             };
             Timer.prototype.trace = function (writer) {
                 writer.enter(this._name + ': ' + this._total.toFixed(2) + ' ms' + ', count: ' + this._count + ', average: ' + (this._total / this._count).toFixed(2) + ' ms');
-                for (var name in this._timers) {
-                    this._timers[name].trace(writer);
+                for (var name_1 in this._timers) {
+                    this._timers[name_1].trace(writer);
                 }
                 writer.outdent();
             };
@@ -3362,7 +3456,7 @@ var Shumway;
                     time = 0;
                 }
                 if (!this._enabled) {
-                    return;
+                    return 0;
                 }
                 if (this._counts[name] === undefined) {
                     this._counts[name] = 0;
@@ -3373,8 +3467,8 @@ var Shumway;
                 return this._counts[name];
             };
             Counter.prototype.trace = function (writer) {
-                for (var name in this._counts) {
-                    writer.writeLn(name + ': ' + this._counts[name]);
+                for (var name_2 in this._counts) {
+                    writer.writeLn(name_2 + ': ' + this._counts[name_2]);
                 }
             };
             Counter.prototype._pairToString = function (times, pair) {
@@ -3394,10 +3488,10 @@ var Shumway;
                 var self = this;
                 var times = this._times;
                 var pairs = [];
-                for (var name in this._counts) {
+                for (var name_3 in this._counts) {
                     pairs.push([
-                        name,
-                        this._counts[name]
+                        name_3,
+                        this._counts[name_3]
                     ]);
                 }
                 pairs.sort(function (a, b) {
@@ -3414,10 +3508,10 @@ var Shumway;
                 var self = this;
                 var times = this._times;
                 var pairs = [];
-                for (var name in this._counts) {
+                for (var name_4 in this._counts) {
                     pairs.push([
-                        name,
-                        this._counts[name]
+                        name_4,
+                        this._counts[name_4]
                     ]);
                 }
                 pairs.sort(function (a, b) {
@@ -3461,34 +3555,6 @@ var Shumway;
         }();
         Metrics.Average = Average;
     }(Metrics = Shumway.Metrics || (Shumway.Metrics = {})));
-}(Shumway || (Shumway = {})));
-/*
- * Copyright 2014 Mozilla Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var __extends = this && this.__extends || function (d, b) {
-    for (var p in b)
-        if (b.hasOwnProperty(p))
-            d[p] = b[p];
-    function __() {
-        this.constructor = d;
-    }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Shumway;
-(function (Shumway) {
     var ArrayUtilities;
     (function (ArrayUtilities) {
         var InflateState;
@@ -3505,7 +3571,6 @@ var Shumway;
         var WINDOW_SIZE = 32768;
         var WINDOW_SHIFT_POSITION = 65536;
         var MAX_WINDOW_SIZE = WINDOW_SHIFT_POSITION + 258;
-        /* plus max copy len */
         var Inflate = function () {
             function Inflate(verifyHeader) {
             }
@@ -3571,21 +3636,21 @@ var Shumway;
         var BasicInflate = function (_super) {
             __extends(BasicInflate, _super);
             function BasicInflate(verifyHeader) {
-                _super.call(this, verifyHeader);
-                this._buffer = null;
-                this._bufferSize = 0;
-                this._bufferPosition = 0;
-                this._bitBuffer = 0;
-                this._bitLength = 0;
-                this._window = new Uint8Array(MAX_WINDOW_SIZE);
-                this._windowPosition = 0;
-                this._state = verifyHeader ? InflateState.VERIFY_HEADER : InflateState.INIT;
-                this._isFinalBlock = false;
-                this._literalTable = null;
-                this._distanceTable = null;
-                this._block0Read = 0;
-                this._block2State = null;
-                this._copyState = {
+                var _this = _super.call(this, verifyHeader) || this;
+                _this._buffer = null;
+                _this._bufferSize = 0;
+                _this._bufferPosition = 0;
+                _this._bitBuffer = 0;
+                _this._bitLength = 0;
+                _this._window = new Uint8Array(MAX_WINDOW_SIZE);
+                _this._windowPosition = 0;
+                _this._state = verifyHeader ? InflateState.VERIFY_HEADER : InflateState.INIT;
+                _this._isFinalBlock = false;
+                _this._literalTable = null;
+                _this._distanceTable = null;
+                _this._block0Read = 0;
+                _this._block2State = null;
+                _this._copyState = {
                     state: 0,
                     len: 0,
                     lenBits: 0,
@@ -3596,6 +3661,7 @@ var Shumway;
                     initializeTables();
                     areTablesInitialized = true;
                 }
+                return _this;
             }
             BasicInflate.prototype.push = function (data) {
                 if (!this._buffer || this._buffer.length < this._bufferSize + data.length) {
@@ -3700,18 +3766,18 @@ var Shumway;
                     if (bufferSize - position < 4) {
                         return true;
                     }
-                    var length = buffer[position] | buffer[position + 1] << 8;
+                    var length_1 = buffer[position] | buffer[position + 1] << 8;
                     var length2 = buffer[position + 2] | buffer[position + 3] << 8;
                     position += 4;
-                    if ((length ^ length2) !== 65535) {
+                    if ((length_1 ^ length2) !== 65535) {
                         this._error('inflate: invalid block 0 length');
                         state = InflateState.ERROR;
                         break;
                     }
-                    if (length === 0) {
+                    if (length_1 === 0) {
                         state = InflateState.INIT;
                     } else {
-                        this._block0Read = length;
+                        this._block0Read = length_1;
                         state = InflateState.BLOCK_0;
                     }
                     break;
@@ -3743,7 +3809,8 @@ var Shumway;
                     bitBuffer >>= 14;
                     bitLength -= 14;
                     var codeLengths = new Uint8Array(19);
-                    for (var i = 0; i < numLengthCodes; ++i) {
+                    var i = void 0;
+                    for (i = 0; i < numLengthCodes; ++i) {
                         if (bitLength < 3) {
                             bitBuffer |= buffer[position++] << bitLength;
                             bitLength += 8;
@@ -3874,34 +3941,34 @@ var Shumway;
                         bitLengths[i++] = prev = sym;
                         continue;
                     }
-                    var j, dupBits;
+                    var j_1 = void 0, dupBits = void 0;
                     switch (sym) {
                     case 16:
                         dupBits = 2;
-                        j = 3;
+                        j_1 = 3;
                         sym = prev;
                         break;
                     case 17:
                         dupBits = 3;
-                        j = 3;
+                        j_1 = 3;
                         sym = 0;
                         break;
                     case 18:
                         dupBits = 7;
-                        j = 11;
+                        j_1 = 11;
                         sym = 0;
                         break;
                     }
-                    while (j--) {
+                    while (j_1--) {
                         bitLengths[i++] = sym;
                     }
-                    j = this._readBits(dupBits);
-                    if (j < 0) {
+                    j_1 = this._readBits(dupBits);
+                    if (j_1 < 0) {
                         block2State.codesRead = i;
                         block2State.dupBits = dupBits;
                         return true;
                     }
-                    while (j--) {
+                    while (j_1--) {
                         bitLengths[i++] = sym;
                     }
                     prev = sym;
@@ -4089,16 +4156,17 @@ var Shumway;
         var SpecialInflateAdapter = function (_super) {
             __extends(SpecialInflateAdapter, _super);
             function SpecialInflateAdapter(verifyHeader, createSpecialInflate) {
-                _super.call(this, verifyHeader);
-                this._verifyHeader = verifyHeader;
-                this._specialInflate = createSpecialInflate();
-                this._specialInflate.setDataCallback(function (data) {
+                var _this = _super.call(this, verifyHeader) || this;
+                _this._verifyHeader = verifyHeader;
+                _this._specialInflate = createSpecialInflate();
+                _this._specialInflate.setDataCallback(function (data) {
                     this.onData(data);
-                }.bind(this));
+                }.bind(_this));
+                return _this;
             }
             SpecialInflateAdapter.prototype.push = function (data) {
                 if (this._verifyHeader) {
-                    var buffer;
+                    var buffer = void 0;
                     if (this._buffer) {
                         buffer = new Uint8Array(this._buffer.length + data.length);
                         buffer.set(this._buffer);
@@ -4658,7 +4726,7 @@ var Shumway;
                         leftToUnpack--;
                         continue;
                     }
-                    var len;
+                    var len = void 0;
                     if (rangeDec.decodeBit(isRep, state) !== 0) {
                         if (leftToUnpack === 0) {
                             return LZMA_RES_ERROR;
@@ -4674,7 +4742,7 @@ var Shumway;
                                 continue;
                             }
                         } else {
-                            var dist;
+                            var dist = void 0;
                             if (rangeDec.decodeBit(isRepG1, state) === 0) {
                                 dist = rep1;
                             } else {
@@ -5492,7 +5560,7 @@ var Shumway;
                 length = length >>> 0;
                 charSet = axCoerceString(charSet);
                 release || release || notImplemented('packageInternal flash.utils.ObjectInput::readMultiByte');
-                return;
+                return '';
             };
             DataBuffer.prototype.getValue = function (name) {
                 name = name | 0;
@@ -5668,6 +5736,48 @@ var Shumway;
     var DataBuffer = Shumway.ArrayUtilities.DataBuffer;
     var ensureTypedArrayCapacity = Shumway.ArrayUtilities.ensureTypedArrayCapacity;
     var assert = Shumway.Debug.assert;
+    /**
+     * Used for (de-)serializing Graphics path data in defineShape, flash.display.Graphics
+     * and the renderer.
+     */
+    var PathCommand;
+    (function (PathCommand) {
+        PathCommand[PathCommand['BeginSolidFill'] = 1] = 'BeginSolidFill';
+        PathCommand[PathCommand['BeginGradientFill'] = 2] = 'BeginGradientFill';
+        PathCommand[PathCommand['BeginBitmapFill'] = 3] = 'BeginBitmapFill';
+        PathCommand[PathCommand['EndFill'] = 4] = 'EndFill';
+        PathCommand[PathCommand['LineStyleSolid'] = 5] = 'LineStyleSolid';
+        PathCommand[PathCommand['LineStyleGradient'] = 6] = 'LineStyleGradient';
+        PathCommand[PathCommand['LineStyleBitmap'] = 7] = 'LineStyleBitmap';
+        PathCommand[PathCommand['LineEnd'] = 8] = 'LineEnd';
+        PathCommand[PathCommand['MoveTo'] = 9] = 'MoveTo';
+        PathCommand[PathCommand['LineTo'] = 10] = 'LineTo';
+        PathCommand[PathCommand['CurveTo'] = 11] = 'CurveTo';
+        PathCommand[PathCommand['CubicCurveTo'] = 12] = 'CubicCurveTo';
+    }(PathCommand = Shumway.PathCommand || (Shumway.PathCommand = {})));
+    var GradientType;
+    (function (GradientType) {
+        GradientType[GradientType['Linear'] = 16] = 'Linear';
+        GradientType[GradientType['Radial'] = 18] = 'Radial';
+    }(GradientType = Shumway.GradientType || (Shumway.GradientType = {})));
+    var GradientSpreadMethod;
+    (function (GradientSpreadMethod) {
+        GradientSpreadMethod[GradientSpreadMethod['Pad'] = 0] = 'Pad';
+        GradientSpreadMethod[GradientSpreadMethod['Reflect'] = 1] = 'Reflect';
+        GradientSpreadMethod[GradientSpreadMethod['Repeat'] = 2] = 'Repeat';
+    }(GradientSpreadMethod = Shumway.GradientSpreadMethod || (Shumway.GradientSpreadMethod = {})));
+    var GradientInterpolationMethod;
+    (function (GradientInterpolationMethod) {
+        GradientInterpolationMethod[GradientInterpolationMethod['RGB'] = 0] = 'RGB';
+        GradientInterpolationMethod[GradientInterpolationMethod['LinearRGB'] = 1] = 'LinearRGB';
+    }(GradientInterpolationMethod = Shumway.GradientInterpolationMethod || (Shumway.GradientInterpolationMethod = {})));
+    var LineScaleMode;
+    (function (LineScaleMode) {
+        LineScaleMode[LineScaleMode['None'] = 0] = 'None';
+        LineScaleMode[LineScaleMode['Normal'] = 1] = 'Normal';
+        LineScaleMode[LineScaleMode['Vertical'] = 2] = 'Vertical';
+        LineScaleMode[LineScaleMode['Horizontal'] = 3] = 'Horizontal';
+    }(LineScaleMode = Shumway.LineScaleMode || (Shumway.LineScaleMode = {})));
     var PlainObjectShapeData = function () {
         function PlainObjectShapeData(commands, commandsPosition, coordinates, morphCoordinates, coordinatesPosition, styles, stylesLength, morphStyles, morphStylesLength, hasFills, hasLines) {
             this.commands = commands;
@@ -5918,6 +6028,102 @@ var Shumway;
     (function (SWF) {
         var Parser;
         (function (Parser) {
+            var SwfTagCode;
+            (function (SwfTagCode) {
+                SwfTagCode[SwfTagCode['CODE_END'] = 0] = 'CODE_END';
+                SwfTagCode[SwfTagCode['CODE_SHOW_FRAME'] = 1] = 'CODE_SHOW_FRAME';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_SHAPE'] = 2] = 'CODE_DEFINE_SHAPE';
+                SwfTagCode[SwfTagCode['CODE_FREE_CHARACTER'] = 3] = 'CODE_FREE_CHARACTER';
+                SwfTagCode[SwfTagCode['CODE_PLACE_OBJECT'] = 4] = 'CODE_PLACE_OBJECT';
+                SwfTagCode[SwfTagCode['CODE_REMOVE_OBJECT'] = 5] = 'CODE_REMOVE_OBJECT';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BITS'] = 6] = 'CODE_DEFINE_BITS';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BUTTON'] = 7] = 'CODE_DEFINE_BUTTON';
+                SwfTagCode[SwfTagCode['CODE_JPEG_TABLES'] = 8] = 'CODE_JPEG_TABLES';
+                SwfTagCode[SwfTagCode['CODE_SET_BACKGROUND_COLOR'] = 9] = 'CODE_SET_BACKGROUND_COLOR';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_FONT'] = 10] = 'CODE_DEFINE_FONT';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_TEXT'] = 11] = 'CODE_DEFINE_TEXT';
+                SwfTagCode[SwfTagCode['CODE_DO_ACTION'] = 12] = 'CODE_DO_ACTION';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_FONT_INFO'] = 13] = 'CODE_DEFINE_FONT_INFO';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_SOUND'] = 14] = 'CODE_DEFINE_SOUND';
+                SwfTagCode[SwfTagCode['CODE_START_SOUND'] = 15] = 'CODE_START_SOUND';
+                SwfTagCode[SwfTagCode['CODE_STOP_SOUND'] = 16] = 'CODE_STOP_SOUND';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BUTTON_SOUND'] = 17] = 'CODE_DEFINE_BUTTON_SOUND';
+                SwfTagCode[SwfTagCode['CODE_SOUND_STREAM_HEAD'] = 18] = 'CODE_SOUND_STREAM_HEAD';
+                SwfTagCode[SwfTagCode['CODE_SOUND_STREAM_BLOCK'] = 19] = 'CODE_SOUND_STREAM_BLOCK';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BITS_LOSSLESS'] = 20] = 'CODE_DEFINE_BITS_LOSSLESS';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BITS_JPEG2'] = 21] = 'CODE_DEFINE_BITS_JPEG2';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_SHAPE2'] = 22] = 'CODE_DEFINE_SHAPE2';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BUTTON_CXFORM'] = 23] = 'CODE_DEFINE_BUTTON_CXFORM';
+                SwfTagCode[SwfTagCode['CODE_PROTECT'] = 24] = 'CODE_PROTECT';
+                SwfTagCode[SwfTagCode['CODE_PATHS_ARE_POSTSCRIPT'] = 25] = 'CODE_PATHS_ARE_POSTSCRIPT';
+                SwfTagCode[SwfTagCode['CODE_PLACE_OBJECT2'] = 26] = 'CODE_PLACE_OBJECT2';
+                // INVALID                             = 27,
+                SwfTagCode[SwfTagCode['CODE_REMOVE_OBJECT2'] = 28] = 'CODE_REMOVE_OBJECT2';
+                SwfTagCode[SwfTagCode['CODE_SYNC_FRAME'] = 29] = 'CODE_SYNC_FRAME';
+                // INVALID                             = 30,
+                SwfTagCode[SwfTagCode['CODE_FREE_ALL'] = 31] = 'CODE_FREE_ALL';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_SHAPE3'] = 32] = 'CODE_DEFINE_SHAPE3';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_TEXT2'] = 33] = 'CODE_DEFINE_TEXT2';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BUTTON2'] = 34] = 'CODE_DEFINE_BUTTON2';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BITS_JPEG3'] = 35] = 'CODE_DEFINE_BITS_JPEG3';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BITS_LOSSLESS2'] = 36] = 'CODE_DEFINE_BITS_LOSSLESS2';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_EDIT_TEXT'] = 37] = 'CODE_DEFINE_EDIT_TEXT';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_VIDEO'] = 38] = 'CODE_DEFINE_VIDEO';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_SPRITE'] = 39] = 'CODE_DEFINE_SPRITE';
+                SwfTagCode[SwfTagCode['CODE_NAME_CHARACTER'] = 40] = 'CODE_NAME_CHARACTER';
+                SwfTagCode[SwfTagCode['CODE_PRODUCT_INFO'] = 41] = 'CODE_PRODUCT_INFO';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_TEXT_FORMAT'] = 42] = 'CODE_DEFINE_TEXT_FORMAT';
+                SwfTagCode[SwfTagCode['CODE_FRAME_LABEL'] = 43] = 'CODE_FRAME_LABEL';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BEHAVIOUR'] = 44] = 'CODE_DEFINE_BEHAVIOUR';
+                SwfTagCode[SwfTagCode['CODE_SOUND_STREAM_HEAD2'] = 45] = 'CODE_SOUND_STREAM_HEAD2';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_MORPH_SHAPE'] = 46] = 'CODE_DEFINE_MORPH_SHAPE';
+                SwfTagCode[SwfTagCode['CODE_GENERATE_FRAME'] = 47] = 'CODE_GENERATE_FRAME';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_FONT2'] = 48] = 'CODE_DEFINE_FONT2';
+                SwfTagCode[SwfTagCode['CODE_GEN_COMMAND'] = 49] = 'CODE_GEN_COMMAND';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_COMMAND_OBJECT'] = 50] = 'CODE_DEFINE_COMMAND_OBJECT';
+                SwfTagCode[SwfTagCode['CODE_CHARACTER_SET'] = 51] = 'CODE_CHARACTER_SET';
+                SwfTagCode[SwfTagCode['CODE_EXTERNAL_FONT'] = 52] = 'CODE_EXTERNAL_FONT';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_FUNCTION'] = 53] = 'CODE_DEFINE_FUNCTION';
+                SwfTagCode[SwfTagCode['CODE_PLACE_FUNCTION'] = 54] = 'CODE_PLACE_FUNCTION';
+                SwfTagCode[SwfTagCode['CODE_GEN_TAG_OBJECTS'] = 55] = 'CODE_GEN_TAG_OBJECTS';
+                SwfTagCode[SwfTagCode['CODE_EXPORT_ASSETS'] = 56] = 'CODE_EXPORT_ASSETS';
+                SwfTagCode[SwfTagCode['CODE_IMPORT_ASSETS'] = 57] = 'CODE_IMPORT_ASSETS';
+                SwfTagCode[SwfTagCode['CODE_ENABLE_DEBUGGER'] = 58] = 'CODE_ENABLE_DEBUGGER';
+                SwfTagCode[SwfTagCode['CODE_DO_INIT_ACTION'] = 59] = 'CODE_DO_INIT_ACTION';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_VIDEO_STREAM'] = 60] = 'CODE_DEFINE_VIDEO_STREAM';
+                SwfTagCode[SwfTagCode['CODE_VIDEO_FRAME'] = 61] = 'CODE_VIDEO_FRAME';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_FONT_INFO2'] = 62] = 'CODE_DEFINE_FONT_INFO2';
+                SwfTagCode[SwfTagCode['CODE_DEBUG_ID'] = 63] = 'CODE_DEBUG_ID';
+                SwfTagCode[SwfTagCode['CODE_ENABLE_DEBUGGER2'] = 64] = 'CODE_ENABLE_DEBUGGER2';
+                SwfTagCode[SwfTagCode['CODE_SCRIPT_LIMITS'] = 65] = 'CODE_SCRIPT_LIMITS';
+                SwfTagCode[SwfTagCode['CODE_SET_TAB_INDEX'] = 66] = 'CODE_SET_TAB_INDEX';
+                // CODE_DEFINE_SHAPE4                  = 67,
+                // INVALID                             = 68,
+                SwfTagCode[SwfTagCode['CODE_FILE_ATTRIBUTES'] = 69] = 'CODE_FILE_ATTRIBUTES';
+                SwfTagCode[SwfTagCode['CODE_PLACE_OBJECT3'] = 70] = 'CODE_PLACE_OBJECT3';
+                SwfTagCode[SwfTagCode['CODE_IMPORT_ASSETS2'] = 71] = 'CODE_IMPORT_ASSETS2';
+                SwfTagCode[SwfTagCode['CODE_DO_ABC_DEFINE'] = 72] = 'CODE_DO_ABC_DEFINE';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_FONT_ALIGN_ZONES'] = 73] = 'CODE_DEFINE_FONT_ALIGN_ZONES';
+                SwfTagCode[SwfTagCode['CODE_CSM_TEXT_SETTINGS'] = 74] = 'CODE_CSM_TEXT_SETTINGS';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_FONT3'] = 75] = 'CODE_DEFINE_FONT3';
+                SwfTagCode[SwfTagCode['CODE_SYMBOL_CLASS'] = 76] = 'CODE_SYMBOL_CLASS';
+                SwfTagCode[SwfTagCode['CODE_METADATA'] = 77] = 'CODE_METADATA';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_SCALING_GRID'] = 78] = 'CODE_DEFINE_SCALING_GRID';
+                // INVALID                             = 79,
+                // INVALID                             = 80,
+                // INVALID                             = 81,
+                SwfTagCode[SwfTagCode['CODE_DO_ABC'] = 82] = 'CODE_DO_ABC';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_SHAPE4'] = 83] = 'CODE_DEFINE_SHAPE4';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_MORPH_SHAPE2'] = 84] = 'CODE_DEFINE_MORPH_SHAPE2';
+                // INVALID                             = 85,
+                SwfTagCode[SwfTagCode['CODE_DEFINE_SCENE_AND_FRAME_LABEL_DATA'] = 86] = 'CODE_DEFINE_SCENE_AND_FRAME_LABEL_DATA';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BINARY_DATA'] = 87] = 'CODE_DEFINE_BINARY_DATA';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_FONT_NAME'] = 88] = 'CODE_DEFINE_FONT_NAME';
+                SwfTagCode[SwfTagCode['CODE_START_SOUND2'] = 89] = 'CODE_START_SOUND2';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_BITS_JPEG4'] = 90] = 'CODE_DEFINE_BITS_JPEG4';
+                SwfTagCode[SwfTagCode['CODE_DEFINE_FONT4'] = 91] = 'CODE_DEFINE_FONT4';
+                SwfTagCode[SwfTagCode['CODE_TELEMETRY'] = 93] = 'CODE_TELEMETRY';
+            }(SwfTagCode = Parser.SwfTagCode || (Parser.SwfTagCode = {})));
             var SwfTagCodeNames = [
                 'CODE_END',
                 'CODE_SHOW_FRAME',
@@ -6017,6 +6223,7 @@ var Shumway;
                 return release ? 'SwfTagCode: ' + tagCode : SwfTagCodeNames[tagCode];
             }
             Parser.getSwfTagCodeName = getSwfTagCodeName;
+            var DefinitionTags;
             (function (DefinitionTags) {
                 DefinitionTags[DefinitionTags['CODE_DEFINE_SHAPE'] = 2] = 'CODE_DEFINE_SHAPE';
                 DefinitionTags[DefinitionTags['CODE_DEFINE_BITS'] = 6] = 'CODE_DEFINE_BITS';
@@ -6043,22 +6250,22 @@ var Shumway;
                 DefinitionTags[DefinitionTags['CODE_DEFINE_BINARY_DATA'] = 87] = 'CODE_DEFINE_BINARY_DATA';
                 DefinitionTags[DefinitionTags['CODE_DEFINE_BITS_JPEG4'] = 90] = 'CODE_DEFINE_BITS_JPEG4';
                 DefinitionTags[DefinitionTags['CODE_DEFINE_FONT4'] = 91] = 'CODE_DEFINE_FONT4';
-            }(Parser.DefinitionTags || (Parser.DefinitionTags = {})));
-            var DefinitionTags = Parser.DefinitionTags;
+            }(DefinitionTags = Parser.DefinitionTags || (Parser.DefinitionTags = {})));
+            var ImageDefinitionTags;
             (function (ImageDefinitionTags) {
                 ImageDefinitionTags[ImageDefinitionTags['CODE_DEFINE_BITS'] = 6] = 'CODE_DEFINE_BITS';
                 ImageDefinitionTags[ImageDefinitionTags['CODE_DEFINE_BITS_JPEG2'] = 21] = 'CODE_DEFINE_BITS_JPEG2';
                 ImageDefinitionTags[ImageDefinitionTags['CODE_DEFINE_BITS_JPEG3'] = 35] = 'CODE_DEFINE_BITS_JPEG3';
                 ImageDefinitionTags[ImageDefinitionTags['CODE_DEFINE_BITS_JPEG4'] = 90] = 'CODE_DEFINE_BITS_JPEG4';
-            }(Parser.ImageDefinitionTags || (Parser.ImageDefinitionTags = {})));
-            var ImageDefinitionTags = Parser.ImageDefinitionTags;
+            }(ImageDefinitionTags = Parser.ImageDefinitionTags || (Parser.ImageDefinitionTags = {})));
+            var FontDefinitionTags;
             (function (FontDefinitionTags) {
                 FontDefinitionTags[FontDefinitionTags['CODE_DEFINE_FONT'] = 10] = 'CODE_DEFINE_FONT';
                 FontDefinitionTags[FontDefinitionTags['CODE_DEFINE_FONT2'] = 48] = 'CODE_DEFINE_FONT2';
                 FontDefinitionTags[FontDefinitionTags['CODE_DEFINE_FONT3'] = 75] = 'CODE_DEFINE_FONT3';
                 FontDefinitionTags[FontDefinitionTags['CODE_DEFINE_FONT4'] = 91] = 'CODE_DEFINE_FONT4';
-            }(Parser.FontDefinitionTags || (Parser.FontDefinitionTags = {})));
-            var FontDefinitionTags = Parser.FontDefinitionTags;
+            }(FontDefinitionTags = Parser.FontDefinitionTags || (Parser.FontDefinitionTags = {})));
+            var ControlTags;
             (function (ControlTags) {
                 ControlTags[ControlTags['CODE_PLACE_OBJECT'] = 4] = 'CODE_PLACE_OBJECT';
                 ControlTags[ControlTags['CODE_PLACE_OBJECT2'] = 26] = 'CODE_PLACE_OBJECT2';
@@ -6068,8 +6275,121 @@ var Shumway;
                 ControlTags[ControlTags['CODE_START_SOUND'] = 15] = 'CODE_START_SOUND';
                 ControlTags[ControlTags['CODE_START_SOUND2'] = 89] = 'CODE_START_SOUND2';
                 ControlTags[ControlTags['CODE_VIDEO_FRAME'] = 61] = 'CODE_VIDEO_FRAME';
-            }(Parser.ControlTags || (Parser.ControlTags = {})));
-            var ControlTags = Parser.ControlTags;
+            }(ControlTags = Parser.ControlTags || (Parser.ControlTags = {})));
+            var PlaceObjectFlags;
+            (function (PlaceObjectFlags) {
+                PlaceObjectFlags[PlaceObjectFlags['Move'] = 1] = 'Move';
+                PlaceObjectFlags[PlaceObjectFlags['HasCharacter'] = 2] = 'HasCharacter';
+                PlaceObjectFlags[PlaceObjectFlags['HasMatrix'] = 4] = 'HasMatrix';
+                PlaceObjectFlags[PlaceObjectFlags['HasColorTransform'] = 8] = 'HasColorTransform';
+                PlaceObjectFlags[PlaceObjectFlags['HasRatio'] = 16] = 'HasRatio';
+                PlaceObjectFlags[PlaceObjectFlags['HasName'] = 32] = 'HasName';
+                PlaceObjectFlags[PlaceObjectFlags['HasClipDepth'] = 64] = 'HasClipDepth';
+                PlaceObjectFlags[PlaceObjectFlags['HasClipActions'] = 128] = 'HasClipActions';
+                PlaceObjectFlags[PlaceObjectFlags['HasFilterList'] = 256] = 'HasFilterList';
+                PlaceObjectFlags[PlaceObjectFlags['HasBlendMode'] = 512] = 'HasBlendMode';
+                PlaceObjectFlags[PlaceObjectFlags['HasCacheAsBitmap'] = 1024] = 'HasCacheAsBitmap';
+                PlaceObjectFlags[PlaceObjectFlags['HasClassName'] = 2048] = 'HasClassName';
+                PlaceObjectFlags[PlaceObjectFlags['HasImage'] = 4096] = 'HasImage';
+                PlaceObjectFlags[PlaceObjectFlags['HasVisible'] = 8192] = 'HasVisible';
+                PlaceObjectFlags[PlaceObjectFlags['OpaqueBackground'] = 16384] = 'OpaqueBackground';
+                PlaceObjectFlags[PlaceObjectFlags['Reserved'] = 32768] = 'Reserved';
+            }(PlaceObjectFlags = Parser.PlaceObjectFlags || (Parser.PlaceObjectFlags = {})));
+            var AVM1ClipEvents;
+            (function (AVM1ClipEvents) {
+                AVM1ClipEvents[AVM1ClipEvents['Load'] = 1] = 'Load';
+                AVM1ClipEvents[AVM1ClipEvents['EnterFrame'] = 2] = 'EnterFrame';
+                AVM1ClipEvents[AVM1ClipEvents['Unload'] = 4] = 'Unload';
+                AVM1ClipEvents[AVM1ClipEvents['MouseMove'] = 8] = 'MouseMove';
+                AVM1ClipEvents[AVM1ClipEvents['MouseDown'] = 16] = 'MouseDown';
+                AVM1ClipEvents[AVM1ClipEvents['MouseUp'] = 32] = 'MouseUp';
+                AVM1ClipEvents[AVM1ClipEvents['KeyDown'] = 64] = 'KeyDown';
+                AVM1ClipEvents[AVM1ClipEvents['KeyUp'] = 128] = 'KeyUp';
+                AVM1ClipEvents[AVM1ClipEvents['Data'] = 256] = 'Data';
+                AVM1ClipEvents[AVM1ClipEvents['Initialize'] = 512] = 'Initialize';
+                AVM1ClipEvents[AVM1ClipEvents['Press'] = 1024] = 'Press';
+                AVM1ClipEvents[AVM1ClipEvents['Release'] = 2048] = 'Release';
+                AVM1ClipEvents[AVM1ClipEvents['ReleaseOutside'] = 4096] = 'ReleaseOutside';
+                AVM1ClipEvents[AVM1ClipEvents['RollOver'] = 8192] = 'RollOver';
+                AVM1ClipEvents[AVM1ClipEvents['RollOut'] = 16384] = 'RollOut';
+                AVM1ClipEvents[AVM1ClipEvents['DragOver'] = 32768] = 'DragOver';
+                AVM1ClipEvents[AVM1ClipEvents['DragOut'] = 65536] = 'DragOut';
+                AVM1ClipEvents[AVM1ClipEvents['KeyPress'] = 131072] = 'KeyPress';
+                AVM1ClipEvents[AVM1ClipEvents['Construct'] = 262144] = 'Construct';
+            }(AVM1ClipEvents = Parser.AVM1ClipEvents || (Parser.AVM1ClipEvents = {})));
+            var ButtonCharacterFlags;
+            (function (ButtonCharacterFlags) {
+                ButtonCharacterFlags[ButtonCharacterFlags['StateUp'] = 1] = 'StateUp';
+                ButtonCharacterFlags[ButtonCharacterFlags['StateOver'] = 2] = 'StateOver';
+                ButtonCharacterFlags[ButtonCharacterFlags['StateDown'] = 4] = 'StateDown';
+                ButtonCharacterFlags[ButtonCharacterFlags['StateHitTest'] = 8] = 'StateHitTest';
+                ButtonCharacterFlags[ButtonCharacterFlags['HasFilterList'] = 16] = 'HasFilterList';
+                ButtonCharacterFlags[ButtonCharacterFlags['HasBlendMode'] = 32] = 'HasBlendMode';
+            }(ButtonCharacterFlags = Parser.ButtonCharacterFlags || (Parser.ButtonCharacterFlags = {})));
+            var FontFlags;
+            (function (FontFlags) {
+                FontFlags[FontFlags['Bold'] = 1] = 'Bold';
+                FontFlags[FontFlags['Italic'] = 2] = 'Italic';
+                FontFlags[FontFlags['WideOrHasFontData'] = 4] = 'WideOrHasFontData';
+                FontFlags[FontFlags['WideOffset'] = 8] = 'WideOffset';
+                FontFlags[FontFlags['Ansi'] = 16] = 'Ansi';
+                FontFlags[FontFlags['SmallText'] = 32] = 'SmallText';
+                FontFlags[FontFlags['ShiftJis'] = 64] = 'ShiftJis';
+                FontFlags[FontFlags['HasLayout'] = 128] = 'HasLayout';
+            }(FontFlags = Parser.FontFlags || (Parser.FontFlags = {})));
+            var TextRecordFlags;
+            (function (TextRecordFlags) {
+                TextRecordFlags[TextRecordFlags['HasMoveX'] = 1] = 'HasMoveX';
+                TextRecordFlags[TextRecordFlags['HasMoveY'] = 2] = 'HasMoveY';
+                TextRecordFlags[TextRecordFlags['HasColor'] = 4] = 'HasColor';
+                TextRecordFlags[TextRecordFlags['HasFont'] = 8] = 'HasFont';
+            }(TextRecordFlags = Parser.TextRecordFlags || (Parser.TextRecordFlags = {})));
+            var SoundInfoFlags;
+            (function (SoundInfoFlags) {
+                SoundInfoFlags[SoundInfoFlags['HasInPoint'] = 1] = 'HasInPoint';
+                SoundInfoFlags[SoundInfoFlags['HasOutPoint'] = 2] = 'HasOutPoint';
+                SoundInfoFlags[SoundInfoFlags['HasLoops'] = 4] = 'HasLoops';
+                SoundInfoFlags[SoundInfoFlags['HasEnvelope'] = 8] = 'HasEnvelope';
+                SoundInfoFlags[SoundInfoFlags['NoMultiple'] = 16] = 'NoMultiple';
+                SoundInfoFlags[SoundInfoFlags['Stop'] = 32] = 'Stop';
+            }(SoundInfoFlags = Parser.SoundInfoFlags || (Parser.SoundInfoFlags = {})));
+            var TextFlags;
+            (function (TextFlags) {
+                TextFlags[TextFlags['HasFont'] = 1] = 'HasFont';
+                TextFlags[TextFlags['HasMaxLength'] = 2] = 'HasMaxLength';
+                TextFlags[TextFlags['HasColor'] = 4] = 'HasColor';
+                TextFlags[TextFlags['ReadOnly'] = 8] = 'ReadOnly';
+                TextFlags[TextFlags['Password'] = 16] = 'Password';
+                TextFlags[TextFlags['Multiline'] = 32] = 'Multiline';
+                TextFlags[TextFlags['WordWrap'] = 64] = 'WordWrap';
+                TextFlags[TextFlags['HasText'] = 128] = 'HasText';
+                TextFlags[TextFlags['UseOutlines'] = 256] = 'UseOutlines';
+                TextFlags[TextFlags['Html'] = 512] = 'Html';
+                TextFlags[TextFlags['WasStatic'] = 1024] = 'WasStatic';
+                TextFlags[TextFlags['Border'] = 2048] = 'Border';
+                TextFlags[TextFlags['NoSelect'] = 4096] = 'NoSelect';
+                TextFlags[TextFlags['HasLayout'] = 8192] = 'HasLayout';
+                TextFlags[TextFlags['AutoSize'] = 16384] = 'AutoSize';
+                TextFlags[TextFlags['HasFontClass'] = 32768] = 'HasFontClass';
+            }(TextFlags = Parser.TextFlags || (Parser.TextFlags = {})));
+            var ShapeFlags;
+            (function (ShapeFlags) {
+                ShapeFlags[ShapeFlags['UsesScalingStrokes'] = 1] = 'UsesScalingStrokes';
+                ShapeFlags[ShapeFlags['UsesNonScalingStrokes'] = 2] = 'UsesNonScalingStrokes';
+                ShapeFlags[ShapeFlags['UsesFillWindingRule'] = 4] = 'UsesFillWindingRule';
+                ShapeFlags[ShapeFlags['IsMorph'] = 8] = 'IsMorph';
+            }(ShapeFlags = Parser.ShapeFlags || (Parser.ShapeFlags = {})));
+            var ShapeRecordFlags;
+            (function (ShapeRecordFlags) {
+                ShapeRecordFlags[ShapeRecordFlags['Move'] = 1] = 'Move';
+                ShapeRecordFlags[ShapeRecordFlags['HasFillStyle0'] = 2] = 'HasFillStyle0';
+                ShapeRecordFlags[ShapeRecordFlags['HasFillStyle1'] = 4] = 'HasFillStyle1';
+                ShapeRecordFlags[ShapeRecordFlags['HasLineStyle'] = 8] = 'HasLineStyle';
+                ShapeRecordFlags[ShapeRecordFlags['HasNewStyles'] = 16] = 'HasNewStyles';
+                ShapeRecordFlags[ShapeRecordFlags['IsStraight'] = 32] = 'IsStraight';
+                ShapeRecordFlags[ShapeRecordFlags['IsGeneral'] = 64] = 'IsGeneral';
+                ShapeRecordFlags[ShapeRecordFlags['IsVertical'] = 128] = 'IsVertical';
+            }(ShapeRecordFlags = Parser.ShapeRecordFlags || (Parser.ShapeRecordFlags = {})));
         }(Parser = SWF.Parser || (SWF.Parser = {})));
     }(SWF = Shumway.SWF || (Shumway.SWF = {})));
     var unexpected = Shumway.Debug.unexpected;
@@ -6243,12 +6563,168 @@ var Shumway;
     Shumway.flashlog = null;
     var Remoting;
     (function (Remoting) {
+        /**
+         * Remoting phases.
+         */
+        var RemotingPhase;
+        (function (RemotingPhase) {
+            /**
+             * Objects are serialized. During this phase all reachable remotable objects (all objects
+             * reachable from a root set) that are dirty are remoted. This includes all dirty object
+             * properties except for dirty references.
+             */
+            RemotingPhase[RemotingPhase['Objects'] = 0] = 'Objects';
+            /**
+             * Object references are serialized. All objects that are referred to have already been
+             * remoted at this point.
+             */
+            RemotingPhase[RemotingPhase['References'] = 1] = 'References';
+        }(RemotingPhase = Remoting.RemotingPhase || (Remoting.RemotingPhase = {})));
+        var MessageBits;
+        (function (MessageBits) {
+            MessageBits[MessageBits['HasMatrix'] = 1] = 'HasMatrix';
+            MessageBits[MessageBits['HasBounds'] = 2] = 'HasBounds';
+            MessageBits[MessageBits['HasChildren'] = 4] = 'HasChildren';
+            MessageBits[MessageBits['HasColorTransform'] = 8] = 'HasColorTransform';
+            MessageBits[MessageBits['HasClipRect'] = 16] = 'HasClipRect';
+            MessageBits[MessageBits['HasMiscellaneousProperties'] = 32] = 'HasMiscellaneousProperties';
+            MessageBits[MessageBits['HasMask'] = 64] = 'HasMask';
+            MessageBits[MessageBits['HasClip'] = 128] = 'HasClip';
+        }(MessageBits = Remoting.MessageBits || (Remoting.MessageBits = {})));
+        var IDMask;
+        (function (IDMask) {
+            IDMask[IDMask['None'] = 0] = 'None';
+            IDMask[IDMask['Asset'] = 134217728] = 'Asset';
+        }(IDMask = Remoting.IDMask || (Remoting.IDMask = {})));
+        /**
+         * Serialization Format. All commands start with a message tag.
+         */
+        var MessageTag;
+        (function (MessageTag) {
+            MessageTag[MessageTag['EOF'] = 0] = 'EOF';
+            /**
+             * id                   int32,
+             * hasBits              int32,
+             * matrix               Matrix,
+             * colorMatrix          ColorMatrix,
+             * mask                 int32,
+             * misc
+             *   blendMode          int32,
+             *   visible            int32
+             *
+             * @type {number}
+             */
+            MessageTag[MessageTag['UpdateFrame'] = 100] = 'UpdateFrame';
+            MessageTag[MessageTag['UpdateGraphics'] = 101] = 'UpdateGraphics';
+            MessageTag[MessageTag['UpdateBitmapData'] = 102] = 'UpdateBitmapData';
+            MessageTag[MessageTag['UpdateTextContent'] = 103] = 'UpdateTextContent';
+            MessageTag[MessageTag['UpdateStage'] = 104] = 'UpdateStage';
+            MessageTag[MessageTag['UpdateNetStream'] = 105] = 'UpdateNetStream';
+            MessageTag[MessageTag['RequestBitmapData'] = 106] = 'RequestBitmapData';
+            MessageTag[MessageTag['UpdateCurrentMouseTarget'] = 107] = 'UpdateCurrentMouseTarget';
+            MessageTag[MessageTag['DrawToBitmap'] = 200] = 'DrawToBitmap';
+            MessageTag[MessageTag['MouseEvent'] = 300] = 'MouseEvent';
+            MessageTag[MessageTag['KeyboardEvent'] = 301] = 'KeyboardEvent';
+            MessageTag[MessageTag['FocusEvent'] = 302] = 'FocusEvent';
+        }(MessageTag = Remoting.MessageTag || (Remoting.MessageTag = {})));
+        var FilterType;
         (function (FilterType) {
             FilterType[FilterType['Blur'] = 0] = 'Blur';
             FilterType[FilterType['DropShadow'] = 1] = 'DropShadow';
             FilterType[FilterType['ColorMatrix'] = 2] = 'ColorMatrix';
-        }(Remoting.FilterType || (Remoting.FilterType = {})));
-        var FilterType = Remoting.FilterType;
+        }(FilterType = Remoting.FilterType || (Remoting.FilterType = {})));
+        /**
+         * Dictates how color transforms are encoded. The majority of color transforms are
+         * either identity or only modify the alpha multiplier, so we can encode these more
+         * efficiently.
+         */
+        var ColorTransformEncoding;
+        (function (ColorTransformEncoding) {
+            /**
+             * Identity, no need to serialize all the fields.
+             */
+            ColorTransformEncoding[ColorTransformEncoding['Identity'] = 0] = 'Identity';
+            /**
+             * Identity w/ AlphaMultiplier, only the alpha multiplier is serialized.
+             */
+            ColorTransformEncoding[ColorTransformEncoding['AlphaMultiplierOnly'] = 1] = 'AlphaMultiplierOnly';
+            /**
+             * Offsets w/ AlphaMultiplier.
+             */
+            ColorTransformEncoding[ColorTransformEncoding['AlphaMultiplierWithOffsets'] = 2] = 'AlphaMultiplierWithOffsets';
+            /**
+             * All fields are serialized.
+             */
+            ColorTransformEncoding[ColorTransformEncoding['All'] = 3] = 'All';
+        }(ColorTransformEncoding = Remoting.ColorTransformEncoding || (Remoting.ColorTransformEncoding = {})));
+        /**
+         * Dictates how matrices are encoded.
+         */
+        var MatrixEncoding;
+        (function (MatrixEncoding) {
+            /**
+             * Translation only.
+             */
+            MatrixEncoding[MatrixEncoding['TranslationOnly'] = 0] = 'TranslationOnly';
+            /**
+             * Scale and translation only.
+             */
+            MatrixEncoding[MatrixEncoding['ScaleAndTranslationOnly'] = 1] = 'ScaleAndTranslationOnly';
+            /**
+             * Uniform scale in the x and y direction and translation only.
+             */
+            MatrixEncoding[MatrixEncoding['UniformScaleAndTranslationOnly'] = 2] = 'UniformScaleAndTranslationOnly';
+            /**
+             * All fields are serialized.
+             */
+            MatrixEncoding[MatrixEncoding['All'] = 3] = 'All';
+        }(MatrixEncoding = Remoting.MatrixEncoding || (Remoting.MatrixEncoding = {})));
+        var VideoPlaybackEvent;
+        (function (VideoPlaybackEvent) {
+            VideoPlaybackEvent[VideoPlaybackEvent['Initialized'] = 0] = 'Initialized';
+            VideoPlaybackEvent[VideoPlaybackEvent['Metadata'] = 1] = 'Metadata';
+            VideoPlaybackEvent[VideoPlaybackEvent['PlayStart'] = 2] = 'PlayStart';
+            VideoPlaybackEvent[VideoPlaybackEvent['PlayStop'] = 3] = 'PlayStop';
+            VideoPlaybackEvent[VideoPlaybackEvent['BufferEmpty'] = 4] = 'BufferEmpty';
+            VideoPlaybackEvent[VideoPlaybackEvent['BufferFull'] = 5] = 'BufferFull';
+            VideoPlaybackEvent[VideoPlaybackEvent['Pause'] = 6] = 'Pause';
+            VideoPlaybackEvent[VideoPlaybackEvent['Unpause'] = 7] = 'Unpause';
+            VideoPlaybackEvent[VideoPlaybackEvent['Seeking'] = 8] = 'Seeking';
+            VideoPlaybackEvent[VideoPlaybackEvent['Seeked'] = 9] = 'Seeked';
+            VideoPlaybackEvent[VideoPlaybackEvent['Progress'] = 10] = 'Progress';
+            VideoPlaybackEvent[VideoPlaybackEvent['Error'] = 11] = 'Error';
+        }(VideoPlaybackEvent = Remoting.VideoPlaybackEvent || (Remoting.VideoPlaybackEvent = {})));
+        var VideoControlEvent;
+        (function (VideoControlEvent) {
+            VideoControlEvent[VideoControlEvent['Init'] = 1] = 'Init';
+            VideoControlEvent[VideoControlEvent['Pause'] = 2] = 'Pause';
+            VideoControlEvent[VideoControlEvent['Seek'] = 3] = 'Seek';
+            VideoControlEvent[VideoControlEvent['GetTime'] = 4] = 'GetTime';
+            VideoControlEvent[VideoControlEvent['GetBufferLength'] = 5] = 'GetBufferLength';
+            VideoControlEvent[VideoControlEvent['SetSoundLevels'] = 6] = 'SetSoundLevels';
+            VideoControlEvent[VideoControlEvent['GetBytesLoaded'] = 7] = 'GetBytesLoaded';
+            VideoControlEvent[VideoControlEvent['GetBytesTotal'] = 8] = 'GetBytesTotal';
+            VideoControlEvent[VideoControlEvent['EnsurePlaying'] = 9] = 'EnsurePlaying';
+        }(VideoControlEvent = Remoting.VideoControlEvent || (Remoting.VideoControlEvent = {})));
+        var StageScaleMode;
+        (function (StageScaleMode) {
+            StageScaleMode[StageScaleMode['ShowAll'] = 0] = 'ShowAll';
+            StageScaleMode[StageScaleMode['ExactFit'] = 1] = 'ExactFit';
+            StageScaleMode[StageScaleMode['NoBorder'] = 2] = 'NoBorder';
+            StageScaleMode[StageScaleMode['NoScale'] = 4] = 'NoScale';
+        }(StageScaleMode = Remoting.StageScaleMode || (Remoting.StageScaleMode = {})));
+        var StageAlignFlags;
+        (function (StageAlignFlags) {
+            StageAlignFlags[StageAlignFlags['None'] = 0] = 'None';
+            StageAlignFlags[StageAlignFlags['Top'] = 1] = 'Top';
+            StageAlignFlags[StageAlignFlags['Bottom'] = 2] = 'Bottom';
+            StageAlignFlags[StageAlignFlags['Left'] = 4] = 'Left';
+            StageAlignFlags[StageAlignFlags['Right'] = 8] = 'Right';
+            StageAlignFlags[StageAlignFlags['TopLeft'] = 5] = 'TopLeft';
+            StageAlignFlags[StageAlignFlags['BottomLeft'] = 6] = 'BottomLeft';
+            StageAlignFlags[StageAlignFlags['BottomRight'] = 10] = 'BottomRight';
+            StageAlignFlags[StageAlignFlags['TopRight'] = 9] = 'TopRight';
+        }(StageAlignFlags = Remoting.StageAlignFlags || (Remoting.StageAlignFlags = {})));
         Remoting.MouseEventNames = [
             'click',
             'dblclick',
@@ -6263,6 +6739,19 @@ var Shumway;
             'keypress',
             'keyup'
         ];
+        var KeyboardEventFlags;
+        (function (KeyboardEventFlags) {
+            KeyboardEventFlags[KeyboardEventFlags['CtrlKey'] = 1] = 'CtrlKey';
+            KeyboardEventFlags[KeyboardEventFlags['AltKey'] = 2] = 'AltKey';
+            KeyboardEventFlags[KeyboardEventFlags['ShiftKey'] = 4] = 'ShiftKey';
+        }(KeyboardEventFlags = Remoting.KeyboardEventFlags || (Remoting.KeyboardEventFlags = {})));
+        var FocusEventType;
+        (function (FocusEventType) {
+            FocusEventType[FocusEventType['DocumentHidden'] = 0] = 'DocumentHidden';
+            FocusEventType[FocusEventType['DocumentVisible'] = 1] = 'DocumentVisible';
+            FocusEventType[FocusEventType['WindowBlur'] = 2] = 'WindowBlur';
+            FocusEventType[FocusEventType['WindowFocus'] = 3] = 'WindowFocus';
+        }(FocusEventType = Remoting.FocusEventType || (Remoting.FocusEventType = {})));
         /**
          * Implementation of ITransportPeer that uses standard DOM postMessage and
          * events to exchange data between messaging peers.
@@ -6377,7 +6866,6 @@ var ShumwayEnvironment = {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-///<reference path='es6-promises.d.ts' />
 ///<reference path='utilities.ts' />
 ///<reference path='options.ts' />
 ///<reference path='settings.ts'/>
@@ -6396,6 +6884,22 @@ var Errors;
 //# sourceMappingURL=base.js.map
 console.timeEnd('Load Shared Dependencies');
 console.time('Load GFX Dependencies');
+var __extends = this && this.__extends || function () {
+    var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+        d.__proto__ = b;
+    } || function (d, b) {
+        for (var p in b)
+            if (b.hasOwnProperty(p))
+                d[p] = b[p];
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+}();
 /**
  * Copyright 2014 Mozilla Foundation
  *
@@ -6417,6 +6921,12 @@ var Shumway;
     (function (GFX) {
         var assert = Shumway.Debug.assert;
         var clamp = Shumway.NumberUtilities.clamp;
+        var TraceLevel;
+        (function (TraceLevel) {
+            TraceLevel[TraceLevel['None'] = 0] = 'None';
+            TraceLevel[TraceLevel['Brief'] = 1] = 'Brief';
+            TraceLevel[TraceLevel['Verbose'] = 2] = 'Verbose';
+        }(TraceLevel = GFX.TraceLevel || (GFX.TraceLevel = {})));
         var counter = Shumway.Metrics.Counter.instance;
         GFX.frameCounter = new Shumway.Metrics.Counter(true);
         GFX.traceLevel = 2    /* Verbose */;
@@ -6742,7 +7252,7 @@ var Shumway;
              * of its arguments, so that we can apply all recorded drawing commands before calling the
              * original function.
              */
-            var nativeFill = CanvasRenderingContext2D.prototype.fill;
+            var nativeFill_1 = CanvasRenderingContext2D.prototype.fill;
             CanvasRenderingContext2D.prototype.fill = function (path, fillRule) {
                 if (arguments.length) {
                     if (path instanceof Path) {
@@ -6752,12 +7262,12 @@ var Shumway;
                     }
                 }
                 if (fillRule) {
-                    nativeFill.call(this, fillRule);
+                    nativeFill_1.call(this, fillRule);
                 } else {
-                    nativeFill.call(this);
+                    nativeFill_1.call(this);
                 }
             };
-            var nativeStroke = CanvasRenderingContext2D.prototype.stroke;
+            var nativeStroke_1 = CanvasRenderingContext2D.prototype.stroke;
             CanvasRenderingContext2D.prototype.stroke = function (path, fillRule) {
                 if (arguments.length) {
                     if (path instanceof Path) {
@@ -6767,12 +7277,12 @@ var Shumway;
                     }
                 }
                 if (fillRule) {
-                    nativeStroke.call(this, fillRule);
+                    nativeStroke_1.call(this, fillRule);
                 } else {
-                    nativeStroke.call(this);
+                    nativeStroke_1.call(this);
                 }
             };
-            var nativeClip = CanvasRenderingContext2D.prototype.clip;
+            var nativeClip_1 = CanvasRenderingContext2D.prototype.clip;
             CanvasRenderingContext2D.prototype.clip = function (path, fillRule) {
                 if (arguments.length) {
                     if (path instanceof Path) {
@@ -6782,9 +7292,9 @@ var Shumway;
                     }
                 }
                 if (fillRule) {
-                    nativeClip.call(this, fillRule);
+                    nativeClip_1.call(this, fillRule);
                 } else {
-                    nativeClip.call(this);
+                    nativeClip_1.call(this);
                 }
             };
             // Expose our pollyfill to the global object.
@@ -6812,8 +7322,8 @@ var Shumway;
                 if (!CanvasGradient.prototype.setTransform) {
                     CanvasGradient.prototype.setTransform = setTransform;
                 }
-                var originalFill = CanvasRenderingContext2D.prototype.fill;
-                var originalStroke = CanvasRenderingContext2D.prototype.stroke;
+                var originalFill_1 = CanvasRenderingContext2D.prototype.fill;
+                var originalStroke_1 = CanvasRenderingContext2D.prototype.stroke;
                 /**
                  * If the current fillStyle is a |CanvasPattern| or |CanvasGradient| that has a SVGMatrix transformed applied to it, we
                  * first apply the pattern's transform to the current context and then draw the path with the
@@ -6824,7 +7334,7 @@ var Shumway;
                     var hasStyleTransformation = !!this.fillStyle._transform;
                     if (supportsStyle && hasStyleTransformation && path instanceof Path2D) {
                         var m = this.fillStyle._transform;
-                        var i;
+                        var i = void 0;
                         try {
                             i = m.inverse();
                         } catch (e) {
@@ -6836,16 +7346,16 @@ var Shumway;
                         var transformedPath = new Path2D();
                         transformedPath.addPath(path, i);
                         // draw the transformed path, which should render it in its original position but with a transformed style.
-                        originalFill.call(this, transformedPath, fillRule);
+                        originalFill_1.call(this, transformedPath, fillRule);
                         this.transform(i.a, i.b, i.c, i.d, i.e, i.f);
                         return;
                     }
                     if (arguments.length === 0) {
-                        originalFill.call(this);
+                        originalFill_1.call(this);
                     } else if (arguments.length === 1) {
-                        originalFill.call(this, path);
+                        originalFill_1.call(this, path);
                     } else if (arguments.length === 2) {
-                        originalFill.call(this, path, fillRule);
+                        originalFill_1.call(this, path, fillRule);
                     }
                 };
                 /**
@@ -6856,7 +7366,7 @@ var Shumway;
                     var hasStyleTransformation = !!this.strokeStyle._transform;
                     if (supportsStyle && hasStyleTransformation && path instanceof Path2D) {
                         var m = this.strokeStyle._transform;
-                        var i;
+                        var i = void 0;
                         try {
                             i = m.inverse();
                         } catch (e) {
@@ -6871,15 +7381,15 @@ var Shumway;
                         var oldLineWidth = this.lineWidth;
                         this.lineWidth *= Math.sqrt((i.a + i.c) * (i.a + i.c) + (i.d + i.b) * (i.d + i.b)) * Math.SQRT1_2;
                         // draw the transformed path, which should render it in its original position but with a transformed style.
-                        originalStroke.call(this, transformedPath);
+                        originalStroke_1.call(this, transformedPath);
                         this.transform(i.a, i.b, i.c, i.d, i.e, i.f);
                         this.lineWidth = oldLineWidth;
                         return;
                     }
                     if (arguments.length === 0) {
-                        originalStroke.call(this);
+                        originalStroke_1.call(this);
                     } else if (arguments.length === 1) {
-                        originalStroke.call(this, path);
+                        originalStroke_1.call(this, path);
                     }
                 };
             }
@@ -6957,7 +7467,7 @@ var Shumway;
                         Object.defineProperty(CanvasRenderingContext2D.prototype, 'currentTransform', { get: mozPolyfillCurrentTransform });
                         hasCurrentTransform = true;
                     } else {
-                        var nativeSetTransform = CanvasRenderingContext2D.prototype.setTransform;
+                        var nativeSetTransform_1 = CanvasRenderingContext2D.prototype.setTransform;
                         CanvasRenderingContext2D.prototype.setTransform = function setTransform(a, b, c, d, e, f) {
                             var transform = this.currentTransform;
                             transform.a = a;
@@ -6966,7 +7476,7 @@ var Shumway;
                             transform.d = d;
                             transform.e = e;
                             transform.f = f;
-                            nativeSetTransform.call(this, a, b, c, d, e, f);
+                            nativeSetTransform_1.call(this, a, b, c, d, e, f);
                         };
                         Object.defineProperty(CanvasRenderingContext2D.prototype, 'currentTransform', {
                             get: function () {
@@ -6985,10 +7495,10 @@ var Shumway;
          * Polyfill |globalColorMatrix| on |CanvasRenderingContext2D|.
          */
         if (typeof CanvasRenderingContext2D !== 'undefined' && CanvasRenderingContext2D.prototype.globalColorMatrix === undefined) {
-            var previousFill = CanvasRenderingContext2D.prototype.fill;
-            var previousStroke = CanvasRenderingContext2D.prototype.stroke;
-            var previousFillText = CanvasRenderingContext2D.prototype.fillText;
-            var previousStrokeText = CanvasRenderingContext2D.prototype.strokeText;
+            var previousFill_1 = CanvasRenderingContext2D.prototype.fill;
+            var previousStroke_1 = CanvasRenderingContext2D.prototype.stroke;
+            var previousFillText_1 = CanvasRenderingContext2D.prototype.fillText;
+            var previousStrokeText_1 = CanvasRenderingContext2D.prototype.strokeText;
             Object.defineProperty(CanvasRenderingContext2D.prototype, 'globalColorMatrix', {
                 get: function () {
                     if (this._globalColorMatrix) {
@@ -7020,11 +7530,11 @@ var Shumway;
                     this.fillStyle = transformStyle(this, this.fillStyle, this._globalColorMatrix);
                 }
                 if (arguments.length === 0) {
-                    previousFill.call(this);
+                    previousFill_1.call(this);
                 } else if (arguments.length === 1) {
-                    previousFill.call(this, a);
+                    previousFill_1.call(this, a);
                 } else if (arguments.length === 2) {
-                    previousFill.call(this, a, b);
+                    previousFill_1.call(this, a, b);
                 }
                 if (oldFillStyle) {
                     this.fillStyle = oldFillStyle;
@@ -7040,9 +7550,9 @@ var Shumway;
                     this.strokeStyle = transformStyle(this, this.strokeStyle, this._globalColorMatrix);
                 }
                 if (arguments.length === 0) {
-                    previousStroke.call(this);
+                    previousStroke_1.call(this);
                 } else if (arguments.length === 1) {
-                    previousStroke.call(this, a);
+                    previousStroke_1.call(this, a);
                 }
                 if (oldStrokeStyle) {
                     this.strokeStyle = oldStrokeStyle;
@@ -7058,9 +7568,9 @@ var Shumway;
                     this.fillStyle = transformStyle(this, this.fillStyle, this._globalColorMatrix);
                 }
                 if (arguments.length === 3) {
-                    previousFillText.call(this, text, x, y);
+                    previousFillText_1.call(this, text, x, y);
                 } else if (arguments.length === 4) {
-                    previousFillText.call(this, text, x, y, maxWidth);
+                    previousFillText_1.call(this, text, x, y, maxWidth);
                 } else {
                     Shumway.Debug.unexpected();
                 }
@@ -7078,9 +7588,9 @@ var Shumway;
                     this.strokeStyle = transformStyle(this, this.strokeStyle, this._globalColorMatrix);
                 }
                 if (arguments.length === 3) {
-                    previousStrokeText.call(this, text, x, y);
+                    previousStrokeText_1.call(this, text, x, y);
                 } else if (arguments.length === 4) {
-                    previousStrokeText.call(this, text, x, y, maxWidth);
+                    previousStrokeText_1.call(this, text, x, y, maxWidth);
                 } else {
                     Shumway.Debug.unexpected();
                 }
@@ -7089,6 +7599,11 @@ var Shumway;
                 }
             };
         }
+    }(GFX = Shumway.GFX || (Shumway.GFX = {})));
+}(Shumway || (Shumway = {})));
+(function (Shumway) {
+    var GFX;
+    (function (GFX) {
         var ScreenShot = function () {
             function ScreenShot(dataURL, w, h, pixelRatio) {
                 this.dataURL = dataURL;
@@ -7100,6 +7615,24 @@ var Shumway;
         }();
         GFX.ScreenShot = ScreenShot;
     }(GFX = Shumway.GFX || (Shumway.GFX = {})));
+}(Shumway || (Shumway = {})));
+/**
+ * Copyright 2014 Mozilla Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var Shumway;
+(function (Shumway) {
     var assert = Shumway.Debug.assert;
     /**
      * Maintains a LRU doubly-linked list.
@@ -7419,7 +7952,7 @@ var Shumway;
                     var result = Rectangle.createEmpty();
                     if (this.isEmpty() || other.isEmpty()) {
                         result.setEmpty();
-                        return result;
+                        return;
                     }
                     result.x = Math.max(this.x, other.x);
                     result.y = Math.max(this.y, other.y);
@@ -7595,9 +8128,9 @@ var Shumway;
                 };
                 OBB.prototype.intersectsOneWay = function (other) {
                     for (var i = 0; i < 2; i++) {
+                        var tMin = void 0, tMax = void 0;
                         for (var j = 0; j < 4; j++) {
                             var t = other.corners[j].dot(this.axes[i]);
-                            var tMin, tMax;
                             if (j === 0) {
                                 tMax = tMin = t;
                             } else {
@@ -7617,6 +8150,15 @@ var Shumway;
                 return OBB;
             }();
             Geometry.OBB = OBB;
+            /**
+             * Used to write fast paths for common matrix types.
+             */
+            var MatrixType;
+            (function (MatrixType) {
+                MatrixType[MatrixType['Unknown'] = 0] = 'Unknown';
+                MatrixType[MatrixType['Identity'] = 1] = 'Identity';
+                MatrixType[MatrixType['Translation'] = 2] = 'Translation';
+            }(MatrixType = Geometry.MatrixType || (Geometry.MatrixType = {})));
             var Matrix = function () {
                 function Matrix(a, b, c, d, tx, ty) {
                     this._data = new Float64Array(6);
@@ -7786,11 +8328,11 @@ var Shumway;
                     var w = rectangle.w;
                     var h = rectangle.h;
                     /*
-              
+        
                      0---1
                      | / |
                      3---2
-              
+        
                      */
                     points[0].x = a * x + c * y + tx;
                     points[0].y = b * x + d * y + ty;
@@ -7830,11 +8372,11 @@ var Shumway;
                     var w = rectangle.w;
                     var h = rectangle.h;
                     /*
-              
+        
                      0---1
                      | / |
                      3---2
-              
+        
                      */
                     var x0 = a * x + c * y + tx;
                     var y0 = b * x + d * y + ty;
@@ -8245,8 +8787,8 @@ var Shumway;
                         var h = Math.min(this.r, Math.ceil((rectangle.y + rectangle.h) / this.size)) - y;
                         for (var i = 0; i < w; i++) {
                             for (var j = 0; j < h; j++) {
-                                var cell = this.grid[y + j][x + i];
-                                var intersection = cell.region.clone();
+                                var cell_1 = this.grid[y + j][x + i];
+                                var intersection = cell_1.region.clone();
                                 intersection.intersect(rectangle);
                                 if (!intersection.isEmpty()) {
                                     this.addDirtyRectangle(intersection);
@@ -8307,9 +8849,9 @@ var Shumway;
                             context.stroke();
                         }
                     }    //      context.strokeStyle = "#5856d6";
-                         //      var regions = [];
+                         //      let regions = [];
                          //      this.gatherOptimizedRegions(regions);
-                         //      for (var i = 0; i < regions.length; i++) {
+                         //      for (let i = 0; i < regions.length; i++) {
                          //        context.beginPath();
                          //        drawRectangle(regions[i]);
                          //        context.closePath();
@@ -8320,7 +8862,6 @@ var Shumway;
                 return DirtyRegion;
             }();
             Geometry.DirtyRegion = DirtyRegion;
-            var DirtyRegion;
             (function (DirtyRegion) {
                 var Cell = function () {
                     function Cell(region) {
@@ -8498,8 +9039,8 @@ var Shumway;
                         i++;
                     }
                     do {
-                        var nextY1, nextY2;
-                        var nextSegment1, nextSegment2;
+                        var nextY1 = void 0, nextY2 = void 0;
+                        var nextSegment1 = void 0, nextSegment2 = void 0;
                         if (lines[line1 + 1].x < nextX) {
                             nextY1 = lines[line1 + 1].y;
                             nextSegment1 = true;
@@ -8583,13 +9124,13 @@ var Shumway;
                     if (!this._source.hasFlags(512    /* Scalable */)) {
                         level = clamp(level, -MIN_CACHE_LEVELS, 0);
                     }
-                    var scale = pow2(level);
+                    scale = pow2(level);
                     var levelIndex = MIN_CACHE_LEVELS + level;
                     var cache = this._cacheLevels[levelIndex];
                     if (!cache) {
                         var bounds = this._source.getBounds().getAbsoluteBounds();
                         var scaledBounds = bounds.clone().scale(scale, scale);
-                        var tileW, tileH;
+                        var tileW = void 0, tileH = void 0;
                         if (this._source.hasFlags(256    /* Dynamic */) || !this._source.hasFlags(1024    /* Tileable */) || Math.max(scaledBounds.w, scaledBounds.h) <= this._minUntiledSize) {
                             tileW = scaledBounds.w;
                             tileH = scaledBounds.h;
@@ -8685,37 +9226,6 @@ var Shumway;
             }();
             Geometry.RenderableTileCache = RenderableTileCache;
         }(Geometry = GFX.Geometry || (GFX.Geometry = {})));
-    }(GFX = Shumway.GFX || (Shumway.GFX = {})));
-}(Shumway || (Shumway = {})));
-/**
- * Copyright 2014 Mozilla Foundation
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var __extends = this && this.__extends || function (d, b) {
-    for (var p in b)
-        if (b.hasOwnProperty(p))
-            d[p] = b[p];
-    function __() {
-        this.constructor = d;
-    }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Shumway;
-(function (Shumway) {
-    var GFX;
-    (function (GFX) {
         var roundToMultipleOfPowerOfTwo = Shumway.IntegerUtilities.roundToMultipleOfPowerOfTwo;
         var assert = Shumway.Debug.assert;
         var Rectangle = GFX.Geometry.Rectangle;
@@ -8742,7 +9252,7 @@ var Shumway;
             var Region = function (_super) {
                 __extends(Region, _super);
                 function Region() {
-                    _super.apply(this, arguments);
+                    return _super !== null && _super.apply(this, arguments) || this;
                 }
                 return Region;
             }(GFX.Geometry.Rectangle);
@@ -8784,10 +9294,11 @@ var Shumway;
             var CompactCell = function (_super) {
                 __extends(CompactCell, _super);
                 function CompactCell(x, y, w, h, horizontal) {
-                    _super.call(this, x, y, w, h);
-                    this._children = null;
-                    this._horizontal = horizontal;
-                    this.allocated = false;
+                    var _this = _super.call(this, x, y, w, h) || this;
+                    _this._children = null;
+                    _this._horizontal = horizontal;
+                    _this.allocated = false;
+                    return _this;
                 }
                 CompactCell.prototype.clear = function () {
                     this._children = null;
@@ -8798,28 +9309,28 @@ var Shumway;
                 };
                 CompactCell.prototype._insert = function (w, h, depth) {
                     if (depth > CompactAllocator.MAX_DEPTH) {
-                        return;
+                        return null;
                     }
                     if (this.allocated) {
-                        return;
+                        return null;
                     }
                     if (this.w < w || this.h < h) {
-                        return;
+                        return null;
                     }
                     if (!this._children) {
-                        var orientation = !this._horizontal;
+                        var orientation_1 = !this._horizontal;
                         if (CompactAllocator.RANDOM_ORIENTATION) {
-                            orientation = Math.random() >= 0.5;
+                            orientation_1 = Math.random() >= 0.5;
                         }
                         if (this._horizontal) {
                             this._children = [
                                 new CompactCell(this.x, this.y, this.w, h, false),
-                                new CompactCell(this.x, this.y + h, this.w, this.h - h, orientation)
+                                new CompactCell(this.x, this.y + h, this.w, this.h - h, orientation_1)
                             ];
                         } else {
                             this._children = [
                                 new CompactCell(this.x, this.y, w, this.h, true),
-                                new CompactCell(this.x + w, this.y, this.w - w, this.h, orientation)
+                                new CompactCell(this.x + w, this.y, this.w - w, this.h, orientation_1)
                             ];
                         }
                         var first = this._children[0];
@@ -8829,7 +9340,7 @@ var Shumway;
                         }
                         return this._insert(w, h, depth + 1);
                     } else {
-                        var result;
+                        var result = void 0;
                         result = this._children[0]._insert(w, h, depth + 1);
                         if (result) {
                             return result;
@@ -8839,6 +9350,7 @@ var Shumway;
                             return result;
                         }
                     }
+                    return null;
                 };
                 return CompactCell;
             }(RegionAllocator.Region);
@@ -8898,8 +9410,9 @@ var Shumway;
             var GridCell = function (_super) {
                 __extends(GridCell, _super);
                 function GridCell(x, y, w, h) {
-                    _super.call(this, x, y, w, h);
-                    this.index = -1;
+                    var _this = _super.call(this, x, y, w, h) || this;
+                    _this.index = -1;
+                    return _this;
                 }
                 return GridCell;
             }(RegionAllocator.Region);
@@ -8915,8 +9428,9 @@ var Shumway;
             var BucketCell = function (_super) {
                 __extends(BucketCell, _super);
                 function BucketCell(x, y, w, h, region) {
-                    _super.call(this, x, y, w, h);
-                    this.region = region;
+                    var _this = _super.call(this, x, y, w, h) || this;
+                    _this.region = region;
+                    return _this;
                 }
                 return BucketCell;
             }(RegionAllocator.Region);
@@ -9030,6 +9544,7 @@ var Shumway;
         var Matrix = GFX.Geometry.Matrix;
         var DirtyRegion = GFX.Geometry.DirtyRegion;
         var assert = Shumway.Debug.assert;
+        var BlendMode;
         (function (BlendMode) {
             BlendMode[BlendMode['Normal'] = 1] = 'Normal';
             BlendMode[BlendMode['Layer'] = 2] = 'Layer';
@@ -9045,8 +9560,115 @@ var Shumway;
             BlendMode[BlendMode['Erase'] = 12] = 'Erase';
             BlendMode[BlendMode['Overlay'] = 13] = 'Overlay';
             BlendMode[BlendMode['HardLight'] = 14] = 'HardLight';
-        }(GFX.BlendMode || (GFX.BlendMode = {})));
-        var BlendMode = GFX.BlendMode;
+        }(BlendMode = GFX.BlendMode || (GFX.BlendMode = {})));
+        var NodeFlags;
+        (function (NodeFlags) {
+            NodeFlags[NodeFlags['None'] = 0] = 'None';
+            NodeFlags[NodeFlags['Visible'] = 1] = 'Visible';
+            NodeFlags[NodeFlags['Transparent'] = 2] = 'Transparent';
+            /**
+             * Whether this node acts as a mask for another node.
+             */
+            NodeFlags[NodeFlags['IsMask'] = 4] = 'IsMask';
+            /**
+             * Whether this node is marked to be cached as a bitmap. This isn't just a performance optimization,
+             * but also affects the way masking is performed.
+             */
+            NodeFlags[NodeFlags['CacheAsBitmap'] = 16] = 'CacheAsBitmap';
+            /**
+             * Whether this node's contents should be drawn snapped to pixel boundaries.
+             * Only relevant for bitmaps.
+             */
+            NodeFlags[NodeFlags['PixelSnapping'] = 32] = 'PixelSnapping';
+            /**
+             * Whether this node's contents should use higher quality image smoothing.
+             * Only relevant for bitmaps.
+             */
+            NodeFlags[NodeFlags['ImageSmoothing'] = 64] = 'ImageSmoothing';
+            /**
+             * Whether source has dynamic content.
+             */
+            NodeFlags[NodeFlags['Dynamic'] = 256] = 'Dynamic';
+            /**
+             * Whether the source's content can be scaled and drawn at a higher resolution.
+             */
+            NodeFlags[NodeFlags['Scalable'] = 512] = 'Scalable';
+            /**
+             * Whether the source's content should be tiled.
+             */
+            NodeFlags[NodeFlags['Tileable'] = 1024] = 'Tileable';
+            /**
+             * Whether this node's bounding box is automatically computed from its children. If this
+             * flag is |false| then this node's bounding box can only be set via |setBounds|.
+             */
+            NodeFlags[NodeFlags['BoundsAutoCompute'] = 2048] = 'BoundsAutoCompute';
+            /**
+             * Whether this node needs to be repainted.
+             */
+            NodeFlags[NodeFlags['Dirty'] = 4096] = 'Dirty';
+            /**
+             * Whether this node's bounds is invalid and needs to be recomputed. Only nodes that have the
+             * |BoundsAutoCompute| flag set can have this flag set.
+             */
+            NodeFlags[NodeFlags['InvalidBounds'] = 8192] = 'InvalidBounds';
+            /**
+             * Whether this node's concatenated matrix is invalid. This happens whenever a node's ancestor
+             * is moved in the node tree.
+             */
+            NodeFlags[NodeFlags['InvalidConcatenatedMatrix'] = 16384] = 'InvalidConcatenatedMatrix';
+            /**
+             * Whether this node's inverted concatenated matrix is invalid. This happens whenever a node's ancestor
+             * is moved in the node tree.
+             */
+            NodeFlags[NodeFlags['InvalidInvertedConcatenatedMatrix'] = 32768] = 'InvalidInvertedConcatenatedMatrix';
+            /**
+             * Same as above, but for colors.
+             */
+            NodeFlags[NodeFlags['InvalidConcatenatedColorMatrix'] = 65536] = 'InvalidConcatenatedColorMatrix';
+            /**
+             * Flags to propagate upwards when a node is added or removed from a group.
+             */
+            NodeFlags[NodeFlags['UpOnAddedOrRemoved'] = 12288] = 'UpOnAddedOrRemoved';
+            /**
+             * Flags to propagate downwards when a node is added or removed from a group.
+             */
+            NodeFlags[NodeFlags['DownOnAddedOrRemoved'] = 114688] = 'DownOnAddedOrRemoved';
+            /**
+             * Flags to propagate upwards when a node is moved.
+             */
+            NodeFlags[NodeFlags['UpOnMoved'] = 12288] = 'UpOnMoved';
+            /**
+             * Flags to propagate downwards when a node is moved.
+             */
+            NodeFlags[NodeFlags['DownOnMoved'] = 49152] = 'DownOnMoved';
+            /**
+             * Flags to propagate upwards when a node's color matrix is changed.
+             */
+            NodeFlags[NodeFlags['UpOnColorMatrixChanged'] = 4096] = 'UpOnColorMatrixChanged';
+            /**
+             * Flags to propagate downwards when a node's color matrix is changed.
+             */
+            NodeFlags[NodeFlags['DownOnColorMatrixChanged'] = 65536] = 'DownOnColorMatrixChanged';
+            /**
+             * Flags to propagate upwards when a node is invalidated.
+             */
+            NodeFlags[NodeFlags['UpOnInvalidate'] = 12288] = 'UpOnInvalidate';
+            /**
+             * Default node flags, however not all node types use these defaults.
+             */
+            NodeFlags[NodeFlags['Default'] = 59393] = 'Default';
+        }(NodeFlags = GFX.NodeFlags || (GFX.NodeFlags = {})));
+        /**
+         * Scene graph object hierarchy. This enum makes it possible to write fast type checks.
+         */
+        var NodeType;
+        (function (NodeType) {
+            NodeType[NodeType['Node'] = 1] = 'Node';
+            NodeType[NodeType['Shape'] = 3] = 'Shape';
+            NodeType[NodeType['Group'] = 5] = 'Group';
+            NodeType[NodeType['Stage'] = 13] = 'Stage';
+            NodeType[NodeType['Renderable'] = 33] = 'Renderable';    // 0x0020 | Node
+        }(NodeType = GFX.NodeType || (GFX.NodeType = {})));
         function getNodeTypeName(nodeType) {
             if (nodeType === 1    /* Node */)
                 return 'Node';
@@ -9058,7 +9680,17 @@ var Shumway;
                 return 'Stage';
             else if (nodeType === 33    /* Renderable */)
                 return 'Renderable';
+            return '';
         }
+        /**
+         * Basic event types. Not much here.
+         */
+        var NodeEventType;
+        (function (NodeEventType) {
+            NodeEventType[NodeEventType['None'] = 0] = 'None';
+            NodeEventType[NodeEventType['OnStageBoundsChanged'] = 1] = 'OnStageBoundsChanged';
+            NodeEventType[NodeEventType['RemovedFromStage'] = 2] = 'RemovedFromStage';
+        }(NodeEventType = GFX.NodeEventType || (GFX.NodeEventType = {})));
         /**
          * Basic node visitor. Inherit from this if you want a more sophisticated visitor, for instance all
          * renderers extends this class.
@@ -9101,8 +9733,9 @@ var Shumway;
         var PreRenderState = function (_super) {
             __extends(PreRenderState, _super);
             function PreRenderState() {
-                _super.call(this);
-                this.depth = 0;
+                var _this = _super.call(this) || this;
+                _this.depth = 0;
+                return _this;
             }
             return PreRenderState;
         }(State);
@@ -9114,10 +9747,11 @@ var Shumway;
         var PreRenderVisitor = function (_super) {
             __extends(PreRenderVisitor, _super);
             function PreRenderVisitor() {
-                _super.apply(this, arguments);
-                this.isDirty = true;
-                this._dirtyRegion = null;
-                this._depth = 0;
+                var _this = _super !== null && _super.apply(this, arguments) || this;
+                _this.isDirty = true;
+                _this._dirtyRegion = null;
+                _this._depth = 0;
+                return _this;
             }
             PreRenderVisitor.prototype.start = function (node, dirtyRegion) {
                 this._dirtyRegion = dirtyRegion;
@@ -9147,8 +9781,9 @@ var Shumway;
         var TracingNodeVisitor = function (_super) {
             __extends(TracingNodeVisitor, _super);
             function TracingNodeVisitor(writer) {
-                _super.call(this);
-                this.writer = writer;
+                var _this = _super.call(this) || this;
+                _this.writer = writer;
+                return _this;
             }
             TracingNodeVisitor.prototype.visitNode = function (node, state) {
             };
@@ -9471,7 +10106,7 @@ var Shumway;
                 return bounds;
             };
             //    public getConcatenatedMatrix(clone: boolean = false): Matrix {
-            //      var transform: Transform = this.getTransform(false);
+            //      let transform: Transform = this.getTransform(false);
             //      if (transform) {
             //        return transform.getConcatenatedMatrix(clone);
             //      }
@@ -9481,21 +10116,22 @@ var Shumway;
              * Dispatch on node types.
              */
             Node.prototype.visit = function (visitor, state) {
+                var thisAny = this;
                 switch (this._type) {
                 case 1    /* Node */:
                     visitor.visitNode(this, state);
                     break;
                 case 5    /* Group */:
-                    visitor.visitGroup(this, state);
+                    visitor.visitGroup(thisAny, state);
                     break;
                 case 13    /* Stage */:
-                    visitor.visitStage(this, state);
+                    visitor.visitStage(thisAny, state);
                     break;
                 case 3    /* Shape */:
-                    visitor.visitShape(this, state);
+                    visitor.visitShape(thisAny, state);
                     break;
                 case 33    /* Renderable */:
-                    visitor.visitRenderable(this, state);
+                    visitor.visitRenderable(thisAny, state);
                     break;
                 default:
                     Shumway.Debug.unexpectedCase();
@@ -9532,9 +10168,10 @@ var Shumway;
         var Group = function (_super) {
             __extends(Group, _super);
             function Group() {
-                _super.call(this);
-                this._type = 5    /* Group */;
-                this._children = [];
+                var _this = _super.call(this) || this;
+                _this._type = 5    /* Group */;
+                _this._children = [];
+                return _this;
             }
             Group.prototype.getChildren = function (clone) {
                 if (clone === void 0) {
@@ -9765,12 +10402,12 @@ var Shumway;
                     var path = Node._getAncestors(this._node, ancestor);
                     var m = ancestor ? ancestor.getTransform()._concatenatedMatrix.clone() : Matrix.createIdentity();
                     for (var i = path.length - 1; i >= 0; i--) {
-                        var ancestor = path[i];
-                        var ancestorTransform = ancestor.getTransform();
-                        release || assert(ancestor.hasFlags(16384    /* InvalidConcatenatedMatrix */));
+                        var ancestor_1 = path[i];
+                        var ancestorTransform = ancestor_1.getTransform();
+                        release || assert(ancestor_1.hasFlags(16384    /* InvalidConcatenatedMatrix */));
                         m.preMultiply(ancestorTransform._matrix);
                         ancestorTransform._concatenatedMatrix.set(m);
-                        ancestor.removeFlags(16384    /* InvalidConcatenatedMatrix */);
+                        ancestor_1.removeFlags(16384    /* InvalidConcatenatedMatrix */);
                     }
                 }
                 if (clone) {
@@ -9794,11 +10431,11 @@ var Shumway;
             //    public getConcatenatedColorMatrix(clone: boolean = false): ColorMatrix {
             //      // Compute the concatenated color transforms for this node and all of its ancestors.
             //      if (this.hasFlags(NodeFlags.InvalidConcatenatedColorMatrix)) {
-            //        var ancestor = <Transform>this._findClosestAncestor(NodeFlags.InvalidConcatenatedColorMatrix, false);
-            //        var path = <Transform []>Node._getAncestors(this, ancestor, NodeType.Transform);
-            //        var m = ancestor ? ancestor._concatenatedColorMatrix.clone() : ColorMatrix.createIdentity();
-            //        for (var i = path.length - 1; i >= 0; i--) {
-            //          var ancestor = path[i];
+            //        let ancestor = <Transform>this._findClosestAncestor(NodeFlags.InvalidConcatenatedColorMatrix, false);
+            //        let path = <Transform []>Node._getAncestors(this, ancestor, NodeType.Transform);
+            //        let m = ancestor ? ancestor._concatenatedColorMatrix.clone() : ColorMatrix.createIdentity();
+            //        for (let i = path.length - 1; i >= 0; i--) {
+            //          let ancestor = path[i];
             //          release || assert (ancestor.hasFlags(NodeFlags.InvalidConcatenatedColorMatrix));
             //          // TODO: Premultiply here.
             //          m.multiply(ancestor._colorMatrix);
@@ -9889,11 +10526,12 @@ var Shumway;
         var Shape = function (_super) {
             __extends(Shape, _super);
             function Shape(source) {
-                _super.call(this);
+                var _this = _super.call(this) || this;
                 release || assert(source);
-                this._source = source;
-                this._type = 3    /* Shape */;
-                this._ratio = 0;
+                _this._source = source;
+                _this._type = 3    /* Shape */;
+                _this._ratio = 0;
+                return _this;
             }
             Shape.prototype.getBounds = function (clone) {
                 if (clone === void 0) {
@@ -9958,18 +10596,27 @@ var Shumway;
             return RendererOptions;
         }();
         GFX.RendererOptions = RendererOptions;
+        var Backend;
+        (function (Backend) {
+            Backend[Backend['Canvas2D'] = 0] = 'Canvas2D';
+            Backend[Backend['WebGL'] = 1] = 'WebGL';
+            Backend[Backend['Both'] = 2] = 'Both';
+            Backend[Backend['DOM'] = 3] = 'DOM';
+            Backend[Backend['SVG'] = 4] = 'SVG';    // Someday
+        }(Backend = GFX.Backend || (GFX.Backend = {})));
         /**
          * Base class for all renderers.
          */
         var Renderer = function (_super) {
             __extends(Renderer, _super);
             function Renderer(container, stage, options) {
-                _super.call(this);
-                this._container = container;
-                this._stage = stage;
-                this._options = options;
-                this._viewport = Rectangle.createSquare(1024);
-                this._devicePixelRatio = 1;
+                var _this = _super.call(this) || this;
+                _this._container = container;
+                _this._stage = stage;
+                _this._options = options;
+                _this._viewport = Rectangle.createSquare(1024);
+                _this._devicePixelRatio = 1;
+                return _this;
             }
             Object.defineProperty(Renderer.prototype, 'viewport', {
                 set: function (viewport) {
@@ -10006,24 +10653,25 @@ var Shumway;
                 if (trackDirtyRegion === void 0) {
                     trackDirtyRegion = false;
                 }
-                _super.call(this);
-                this._preVisitor = new PreRenderVisitor();
-                this._flags &= ~2048    /* BoundsAutoCompute */;
-                this._type = 13    /* Stage */;
-                this._scaleMode = Stage.DEFAULT_SCALE;
-                this._align = Stage.DEFAULT_ALIGN;
-                this._content = new Group();
-                this._content._flags &= ~2048    /* BoundsAutoCompute */;
-                this.addChild(this._content);
-                this.setFlags(4096    /* Dirty */);
-                this.setBounds(new Rectangle(0, 0, w, h));
+                var _this = _super.call(this) || this;
+                _this._preVisitor = new PreRenderVisitor();
+                _this._flags &= ~2048    /* BoundsAutoCompute */;
+                _this._type = 13    /* Stage */;
+                _this._scaleMode = Stage.DEFAULT_SCALE;
+                _this._align = Stage.DEFAULT_ALIGN;
+                _this._content = new Group();
+                _this._content._flags &= ~2048    /* BoundsAutoCompute */;
+                _this.addChild(_this._content);
+                _this.setFlags(4096    /* Dirty */);
+                _this.setBounds(new Rectangle(0, 0, w, h));
                 if (trackDirtyRegion) {
-                    this._dirtyRegion = new DirtyRegion(w, h);
-                    this._dirtyRegion.addDirtyRectangle(new Rectangle(0, 0, w, h));
+                    _this._dirtyRegion = new DirtyRegion(w, h);
+                    _this._dirtyRegion.addDirtyRectangle(new Rectangle(0, 0, w, h));
                 } else {
-                    this._dirtyRegion = null;
+                    _this._dirtyRegion = null;
                 }
-                this._updateContentMatrix();
+                _this._updateContentMatrix();
+                return _this;
             }
             Object.defineProperty(Stage.prototype, 'dirtyRegion', {
                 get: function () {
@@ -10152,18 +10800,19 @@ var Shumway;
         var Renderable = function (_super) {
             __extends(Renderable, _super);
             function Renderable() {
-                _super.call(this);
+                var _this = _super.call(this) || this;
                 /**
                  * Back reference to nodes that use this renderable.
                  */
-                this._parents = [];
+                _this._parents = [];
                 /**
                  * Back reference to renderables that use this renderable.
                  */
-                this._renderableParents = [];
-                this._invalidateEventListeners = null;
-                this._flags &= ~2048    /* BoundsAutoCompute */;
-                this._type = 33    /* Renderable */;
+                _this._renderableParents = [];
+                _this._invalidateEventListeners = null;
+                _this._flags &= ~2048    /* BoundsAutoCompute */;
+                _this._type = 33    /* Renderable */;
+                return _this;
             }
             Object.defineProperty(Renderable.prototype, 'parents', {
                 get: function () {
@@ -10279,28 +10928,36 @@ var Shumway;
         var CustomRenderable = function (_super) {
             __extends(CustomRenderable, _super);
             function CustomRenderable(bounds, render) {
-                _super.call(this);
-                this.setBounds(bounds);
-                this.render = render;
+                var _this = _super.call(this) || this;
+                _this.setBounds(bounds);
+                _this.render = render;
+                return _this;
             }
             return CustomRenderable;
         }(Renderable);
         GFX.CustomRenderable = CustomRenderable;
+        var RenderableVideoState;
+        (function (RenderableVideoState) {
+            RenderableVideoState[RenderableVideoState['Idle'] = 1] = 'Idle';
+            RenderableVideoState[RenderableVideoState['Playing'] = 2] = 'Playing';
+            RenderableVideoState[RenderableVideoState['Paused'] = 3] = 'Paused';
+            RenderableVideoState[RenderableVideoState['Ended'] = 4] = 'Ended';
+        }(RenderableVideoState = GFX.RenderableVideoState || (GFX.RenderableVideoState = {})));
         var RenderableVideo = function (_super) {
             __extends(RenderableVideo, _super);
             function RenderableVideo(assetId, eventSerializer) {
-                _super.call(this);
-                this._flags = 256    /* Dynamic */ | 4096    /* Dirty */;
-                this._lastTimeInvalidated = 0;
-                this._lastPausedTime = 0;
-                this._seekHappening = false;
-                this._pauseHappening = false;
-                this._isDOMElement = true;
-                this.setBounds(new Rectangle(0, 0, 1, 1));
-                this._assetId = assetId;
-                this._eventSerializer = eventSerializer;
+                var _this = _super.call(this) || this;
+                _this._flags = 256    /* Dynamic */ | 4096    /* Dirty */;
+                _this._lastTimeInvalidated = 0;
+                _this._lastPausedTime = 0;
+                _this._seekHappening = false;
+                _this._pauseHappening = false;
+                _this._isDOMElement = true;
+                _this.setBounds(new Rectangle(0, 0, 1, 1));
+                _this._assetId = assetId;
+                _this._eventSerializer = eventSerializer;
                 var element = document.createElement('video');
-                var elementEventHandler = this._handleVideoEvent.bind(this);
+                var elementEventHandler = _this._handleVideoEvent.bind(_this);
                 element.preload = 'metadata';
                 // for mobile devices
                 element.addEventListener('play', elementEventHandler);
@@ -10315,13 +10972,14 @@ var Shumway;
                 element.addEventListener('seeked', elementEventHandler);
                 element.addEventListener('canplay', elementEventHandler);
                 element.style.position = 'absolute';
-                this._video = element;
-                this._videoEventHandler = elementEventHandler;
-                RenderableVideo._renderableVideos.push(this);
+                _this._video = element;
+                _this._videoEventHandler = elementEventHandler;
+                RenderableVideo._renderableVideos.push(_this);
                 if (typeof registerInspectorAsset !== 'undefined') {
-                    registerInspectorAsset(-1, -1, this);
+                    registerInspectorAsset(-1, -1, _this);
                 }
-                this._state = 1    /* Idle */;
+                _this._state = 1    /* Idle */;
+                return _this;
             }
             Object.defineProperty(RenderableVideo.prototype, 'video', {
                 get: function () {
@@ -10529,15 +11187,16 @@ var Shumway;
         var RenderableBitmap = function (_super) {
             __extends(RenderableBitmap, _super);
             function RenderableBitmap(source, bounds) {
-                _super.call(this);
-                this._flags = 256    /* Dynamic */ | 4096    /* Dirty */;
-                this.properties = {};
-                this.setBounds(bounds);
+                var _this = _super.call(this) || this;
+                _this._flags = 256    /* Dynamic */ | 4096    /* Dirty */;
+                _this.properties = {};
+                _this.setBounds(bounds);
                 if (source instanceof HTMLCanvasElement) {
-                    this._initializeSourceCanvas(source);
+                    _this._initializeSourceCanvas(source);
                 } else {
-                    this._sourceImage = source;
+                    _this._sourceImage = source;
                 }
+                return _this;
             }
             RenderableBitmap.FromDataBuffer = function (type, dataBuffer, bounds) {
                 GFX.enterTimeline('RenderableBitmap.FromDataBuffer');
@@ -10702,6 +11361,12 @@ var Shumway;
             return RenderableBitmap;
         }(Renderable);
         GFX.RenderableBitmap = RenderableBitmap;
+        var PathType;
+        (function (PathType) {
+            PathType[PathType['Fill'] = 0] = 'Fill';
+            PathType[PathType['Stroke'] = 1] = 'Stroke';
+            PathType[PathType['StrokeFill'] = 2] = 'StrokeFill';    /* Doesn't define thickness, caps and joints. */
+        }(PathType = GFX.PathType || (GFX.PathType = {})));
         var StyledPath = function () {
             function StyledPath(type, style, smoothImage, strokeProperties) {
                 this.type = type;
@@ -10734,16 +11399,17 @@ var Shumway;
         var RenderableShape = function (_super) {
             __extends(RenderableShape, _super);
             function RenderableShape(id, pathData, textures, bounds) {
-                _super.call(this);
-                this._flags = 4096    /* Dirty */ | 512    /* Scalable */ | 1024    /* Tileable */;
-                this.properties = {};
-                this.setBounds(bounds);
-                this._id = id;
-                this._pathData = pathData;
-                this._textures = textures;
+                var _this = _super.call(this) || this;
+                _this._flags = 4096    /* Dirty */ | 512    /* Scalable */ | 1024    /* Tileable */;
+                _this.properties = {};
+                _this.setBounds(bounds);
+                _this._id = id;
+                _this._pathData = pathData;
+                _this._textures = textures;
                 if (textures.length) {
-                    this.setFlags(256    /* Dynamic */);
+                    _this.setFlags(256    /* Dynamic */);
                 }
+                return _this;
             }
             RenderableShape.prototype.update = function (pathData, textures, bounds) {
                 this.setBounds(bounds);
@@ -10846,7 +11512,8 @@ var Shumway;
                 var coordinatesIndex = 0;
                 var commandsCount = data.commandsPosition;
                 // Description of serialization format can be found in flash.display.Graphics.
-                for (var commandIndex = 0; commandIndex < commandsCount; commandIndex++) {
+                var commandIndex;
+                for (commandIndex = 0; commandIndex < commandsCount; commandIndex++) {
                     var command = commands[commandIndex];
                     switch (command) {
                     case 9    /* MoveTo */:
@@ -10916,8 +11583,8 @@ var Shumway;
                             strokePath = this._createPath(2    /* StrokeFill */, this._readGradient(styles, context), false, strokeProperties, x, y);
                         } else if (commands[commandIndex + 1] === 6    /* LineStyleGradient */) {
                             commandIndex++;
-                            var bitmapStyle = this._readBitmap(styles, context);
-                            strokePath = this._createPath(2    /* StrokeFill */, bitmapStyle.style, bitmapStyle.smoothImage, strokeProperties, x, y);
+                            var bitmapStyle_1 = this._readBitmap(styles, context);
+                            strokePath = this._createPath(2    /* StrokeFill */, bitmapStyle_1.style, bitmapStyle_1.smoothImage, strokeProperties, x, y);
                         } else {
                             strokePath = this._createPath(1    /* Stroke */, color, false, strokeProperties, x, y);
                         }
@@ -11022,9 +11689,10 @@ var Shumway;
         var RenderableMorphShape = function (_super) {
             __extends(RenderableMorphShape, _super);
             function RenderableMorphShape() {
-                _super.apply(this, arguments);
-                this._flags = 256    /* Dynamic */ | 4096    /* Dirty */ | 512    /* Scalable */ | 1024    /* Tileable */;
-                this._morphPaths = Object.create(null);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
+                _this._flags = 256    /* Dynamic */ | 4096    /* Dirty */ | 512    /* Scalable */ | 1024    /* Tileable */;
+                _this._morphPaths = Object.create(null);
+                return _this;
             }
             RenderableMorphShape.prototype._deserializePaths = function (data, context, ratio) {
                 GFX.enterTimeline('RenderableMorphShape.deserializePaths');
@@ -11056,7 +11724,8 @@ var Shumway;
                 var coordinatesIndex = 0;
                 var commandsCount = data.commandsPosition;
                 // Description of serialization format can be found in flash.display.Graphics.
-                for (var commandIndex = 0; commandIndex < commandsCount; commandIndex++) {
+                var commandIndex;
+                for (commandIndex = 0; commandIndex < commandsCount; commandIndex++) {
                     var command = commands[commandIndex];
                     switch (command) {
                     case 9    /* MoveTo */:
@@ -11127,11 +11796,11 @@ var Shumway;
                         }
                         break;
                     case 6    /* LineStyleGradient */:
-                        var gradientStyle = this._readMorphGradient(styles, morphStyles, ratio, context);
+                        gradientStyle = this._readMorphGradient(styles, morphStyles, ratio, context);
                         strokePath = this._createMorphPath(2    /* StrokeFill */, ratio, gradientStyle, false, null, x, y);
                         break;
                     case 7    /* LineStyleBitmap */:
-                        var bitmapStyle = this._readMorphBitmap(styles, morphStyles, ratio, context);
+                        bitmapStyle = this._readMorphBitmap(styles, morphStyles, ratio, context);
                         strokePath = this._createMorphPath(2    /* StrokeFill */, ratio, bitmapStyle.style, bitmapStyle.smoothImage, null, x, y);
                         break;
                     case 8    /* LineEnd */:
@@ -11171,10 +11840,10 @@ var Shumway;
                 gradient.setTransform && gradient.setTransform(transform.toSVGMatrix());
                 var colorStopsCount = styles.readUnsignedByte();
                 for (var i = 0; i < colorStopsCount; i++) {
-                    var stop = morph(styles.readUnsignedByte() / 255, morphStyles.readUnsignedByte() / 255, ratio);
+                    var stop_1 = morph(styles.readUnsignedByte() / 255, morphStyles.readUnsignedByte() / 255, ratio);
                     var color = morphColor(styles.readUnsignedInt(), morphStyles.readUnsignedInt(), ratio);
                     var cssColor = Shumway.ColorUtilities.rgbaToCSSStyle(color);
-                    gradient.addColorStop(stop, cssColor);
+                    gradient.addColorStop(stop_1, cssColor);
                 }
                 // Skip spread and interpolation modes for now.
                 styles.position += 2;
@@ -11337,21 +12006,22 @@ var Shumway;
         var RenderableText = function (_super) {
             __extends(RenderableText, _super);
             function RenderableText(bounds) {
-                _super.call(this);
-                this._flags = 256    /* Dynamic */ | 4096    /* Dirty */;
-                this.properties = {};
-                this._textBounds = bounds.clone();
-                this._textRunData = null;
-                this._plainText = '';
-                this._backgroundColor = 0;
-                this._borderColor = 0;
-                this._matrix = Matrix.createIdentity();
-                this._coords = null;
-                this._scrollV = 1;
-                this._scrollH = 0;
-                this.textRect = bounds.clone();
-                this.lines = [];
-                this.setBounds(bounds);
+                var _this = _super.call(this) || this;
+                _this._flags = 256    /* Dynamic */ | 4096    /* Dirty */;
+                _this.properties = {};
+                _this._textBounds = bounds.clone();
+                _this._textRunData = null;
+                _this._plainText = '';
+                _this._backgroundColor = 0;
+                _this._borderColor = 0;
+                _this._matrix = Matrix.createIdentity();
+                _this._coords = null;
+                _this._scrollV = 1;
+                _this._scrollH = 0;
+                _this.textRect = bounds.clone();
+                _this.lines = [];
+                _this.setBounds(bounds);
+                return _this;
             }
             RenderableText.prototype.setBounds = function (bounds) {
                 _super.prototype.setBounds.call(this, bounds);
@@ -11455,19 +12125,19 @@ var Shumway;
                         firstAlign = align;
                     }
                     var bullet = textRunData.readBoolean();
-                    //var display = textRunData.readInt();
+                    //let display = textRunData.readInt();
                     var indent = textRunData.readInt();
-                    //var blockIndent = textRunData.readInt();
+                    //let blockIndent = textRunData.readInt();
                     var kerning = textRunData.readInt();
                     var leftMargin = textRunData.readInt();
                     var letterSpacing = textRunData.readInt();
                     var rightMargin = textRunData.readInt();
-                    //var tabStops = textRunData.readInt();
+                    //let tabStops = textRunData.readInt();
                     var underline = textRunData.readBoolean();
                     var text = '';
                     var eof = false;
                     for (var i = beginIndex; !eof; i++) {
-                        var eof = i >= endIndex - 1;
+                        var eof_1 = i >= endIndex - 1;
                         var char = plainText[i];
                         if (char !== '\r' && char !== '\n') {
                             text += char;
@@ -11478,7 +12148,7 @@ var Shumway;
                         currentLine.addRun(font, fillStyle, text, letterSpacing, underline);
                         finishLine();
                         text = '';
-                        if (eof) {
+                        if (eof_1) {
                             maxAscent = 0;
                             maxDescent = 0;
                             maxLeading = -4294967295;
@@ -11505,11 +12175,14 @@ var Shumway;
                         var width = bounds.w;
                         switch (autoSize) {
                         case 1:
+                            // CENTER
                             rect.x = width - (availableWidth + 4) >> 1;
                             break;
                         case 2:
+                            // LEFT
                             break;
                         case 3:
+                            // RIGHT
                             rect.x = width - (availableWidth + 4);
                             break;
                         }
@@ -11527,11 +12200,14 @@ var Shumway;
                     if (line.width < availableWidth) {
                         switch (line.align) {
                         case 0:
+                            // left
                             break;
                         case 1:
+                            // right
                             line.x = availableWidth - line.width | 0;
                             break;
                         case 2:
+                            // center
                             line.x = (availableWidth - line.width) / 2 | 0;
                             break;
                         }
@@ -11698,10 +12374,11 @@ var Shumway;
         var Label = function (_super) {
             __extends(Label, _super);
             function Label(w, h) {
-                _super.call(this);
-                this._flags = 256    /* Dynamic */ | 512    /* Scalable */;
-                this.properties = {};
-                this.setBounds(new Rectangle(0, 0, w, h));
+                var _this = _super.call(this) || this;
+                _this._flags = 256    /* Dynamic */ | 512    /* Scalable */;
+                _this.properties = {};
+                _this.setBounds(new Rectangle(0, 0, w, h));
+                return _this;
             }
             Object.defineProperty(Label.prototype, 'text', {
                 get: function () {
@@ -11780,10 +12457,11 @@ var Shumway;
         var BlurFilter = function (_super) {
             __extends(BlurFilter, _super);
             function BlurFilter(blurX, blurY, quality) {
-                _super.call(this);
-                this.blurX = blurX;
-                this.blurY = blurY;
-                this.quality = quality;
+                var _this = _super.call(this) || this;
+                _this.blurX = blurX;
+                _this.blurY = blurY;
+                _this.quality = quality;
+                return _this;
             }
             BlurFilter.prototype.expandBounds = function (bounds) {
                 expandBlurBounds(bounds, this.quality, this.blurX, this.blurY, true);
@@ -11794,18 +12472,19 @@ var Shumway;
         var DropshadowFilter = function (_super) {
             __extends(DropshadowFilter, _super);
             function DropshadowFilter(alpha, angle, blurX, blurY, color, distance, hideObject, inner, knockout, quality, strength) {
-                _super.call(this);
-                this.alpha = alpha;
-                this.angle = angle;
-                this.blurX = blurX;
-                this.blurY = blurY;
-                this.color = color;
-                this.distance = distance;
-                this.hideObject = hideObject;
-                this.inner = inner;
-                this.knockout = knockout;
-                this.quality = quality;
-                this.strength = strength;
+                var _this = _super.call(this) || this;
+                _this.alpha = alpha;
+                _this.angle = angle;
+                _this.blurX = blurX;
+                _this.blurY = blurY;
+                _this.color = color;
+                _this.distance = distance;
+                _this.hideObject = hideObject;
+                _this.inner = inner;
+                _this.knockout = knockout;
+                _this.quality = quality;
+                _this.strength = strength;
+                return _this;
             }
             DropshadowFilter.prototype.expandBounds = function (bounds) {
                 // TODO: Once we support inset drop shadows, bounds don't expand.
@@ -11834,15 +12513,16 @@ var Shumway;
         var GlowFilter = function (_super) {
             __extends(GlowFilter, _super);
             function GlowFilter(alpha, blurX, blurY, color, inner, knockout, quality, strength) {
-                _super.call(this);
-                this.alpha = alpha;
-                this.blurX = blurX;
-                this.blurY = blurY;
-                this.color = color;
-                this.inner = inner;
-                this.knockout = knockout;
-                this.quality = quality;
-                this.strength = strength;
+                var _this = _super.call(this) || this;
+                _this.alpha = alpha;
+                _this.blurX = blurX;
+                _this.blurY = blurY;
+                _this.color = color;
+                _this.inner = inner;
+                _this.knockout = knockout;
+                _this.quality = quality;
+                _this.strength = strength;
+                return _this;
             }
             GlowFilter.prototype.expandBounds = function (bounds) {
                 if (!this.inner) {
@@ -11852,13 +12532,19 @@ var Shumway;
             return GlowFilter;
         }(Filter);
         GFX.GlowFilter = GlowFilter;
+        var ColorMatrixType;
+        (function (ColorMatrixType) {
+            ColorMatrixType[ColorMatrixType['Unknown'] = 0] = 'Unknown';
+            ColorMatrixType[ColorMatrixType['Identity'] = 1] = 'Identity';
+        }(ColorMatrixType = GFX.ColorMatrixType || (GFX.ColorMatrixType = {})));
         var ColorMatrix = function (_super) {
             __extends(ColorMatrix, _super);
             function ColorMatrix(data) {
-                _super.call(this);
+                var _this = _super.call(this) || this;
                 release || assert(data.length === 20);
-                this._data = new Float32Array(data);
-                this._type = 0    /* Unknown */;
+                _this._data = new Float32Array(data);
+                _this._type = 0    /* Unknown */;
+                return _this;
             }
             ColorMatrix.prototype.clone = function () {
                 var colorMatrix = new ColorMatrix(this._data);
@@ -12059,6 +12745,52 @@ var Shumway;
             return ColorMatrix;
         }(Filter);
         GFX.ColorMatrix = ColorMatrix;
+    }(GFX = Shumway.GFX || (Shumway.GFX = {})));
+}(Shumway || (Shumway = {})));
+/*
+ * Copyright 2014 Mozilla Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/// <reference path='module.ts' />
+/// <reference path='utilities.ts' />
+/// <reference path='settings.ts'/>
+/// <reference path='geometry.ts'/>
+/// <reference path='regionAllocator.ts'/>
+/// <reference path='nodes.ts'/>
+/// <reference path='renderables/renderables.ts'/>
+/// <reference path='filters.ts'/>
+//# sourceMappingURL=gfx-base.js.map
+var __extends = this && this.__extends || function () {
+    var extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+        d.__proto__ = b;
+    } || function (d, b) {
+        for (var p in b)
+            if (b.hasOwnProperty(p))
+                d[p] = b[p];
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+}();
+var Shumway;
+(function (Shumway) {
+    var GFX;
+    (function (GFX) {
         var Canvas2D;
         (function (Canvas2D) {
             var assert = Shumway.Debug.assert;
@@ -12138,9 +12870,9 @@ var Shumway;
             var clamp = Shumway.NumberUtilities.clamp;
             var isFirefox = navigator.userAgent.indexOf('Firefox') != -1;
             /**
-              * Scale blur radius for each quality level. The scale constants were gathered
-              * experimentally.
-              */
+             * Scale blur radius for each quality level. The scale constants were gathered
+             * experimentally.
+             */
             function getBlurScale(ratio, quality) {
                 var blurScale = ratio / 2;
                 // For some reason we always have to scale by 1/2 first.
@@ -12182,7 +12914,7 @@ var Shumway;
                     // Drop Shadow Filter
                     var dropShadowFilter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
                     dropShadowFilter.setAttribute('id', 'svgDropShadowFilter');
-                    var feGaussianFilter = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+                    feGaussianFilter = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
                     feGaussianFilter.setAttribute('in', 'SourceAlpha');
                     feGaussianFilter.setAttribute('stdDeviation', '3');
                     dropShadowFilter.appendChild(feGaussianFilter);
@@ -12201,7 +12933,7 @@ var Shumway;
                     feComposite.setAttribute('in2', 'offsetblur');
                     feComposite.setAttribute('operator', 'in');
                     dropShadowFilter.appendChild(feComposite);
-                    var feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
+                    feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
                     feComposite.setAttribute('in2', 'SourceAlpha');
                     feComposite.setAttribute('operator', 'out');
                     feComposite.setAttribute('result', 'outer');
@@ -12209,7 +12941,7 @@ var Shumway;
                     var feMerge = document.createElementNS('http://www.w3.org/2000/svg', 'feMerge');
                     var feMergeNode = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
                     feMerge.appendChild(feMergeNode);
-                    var feMergeNode = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
+                    feMergeNode = document.createElementNS('http://www.w3.org/2000/svg', 'feMergeNode');
                     feMerge.appendChild(feMergeNode);
                     Filters._svgDropshadowMergeNode = feMergeNode;
                     dropShadowFilter.appendChild(feMerge);
@@ -12222,7 +12954,7 @@ var Shumway;
                     feColorMatrix.setAttribute('in', 'SourceGraphic');
                     feColorMatrix.setAttribute('type', 'matrix');
                     colorMatrixFilter.appendChild(feColorMatrix);
-                    var feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
+                    feComposite = document.createElementNS('http://www.w3.org/2000/svg', 'feComposite');
                     feComposite.setAttribute('in2', 'SourceAlpha');
                     feComposite.setAttribute('operator', 'in');
                     colorMatrixFilter.appendChild(feComposite);
@@ -12425,7 +13157,7 @@ var Shumway;
                             // surface and keep drawing back and forth between them till all filters are applied,
                             // except of the last one which gets applied when actually drawing into the target after
                             // this block, to safe a drawImage call.
-                            var dx, dy, _cc, _sx, _sy;
+                            var dx = void 0, dy = void 0, _cc = void 0, _sx = void 0, _sy = void 0;
                             if (copyContext) {
                                 _cc = copyContext;
                                 copyContext = sourceContext;
@@ -12518,25 +13250,6 @@ var Shumway;
                 return Canvas2DSurface;
             }();
             Canvas2D.Canvas2DSurface = Canvas2DSurface;
-        }(Canvas2D = GFX.Canvas2D || (GFX.Canvas2D = {})));
-    }(GFX = Shumway.GFX || (Shumway.GFX = {})));
-}(Shumway || (Shumway = {})));
-var __extends = this && this.__extends || function (d, b) {
-    for (var p in b)
-        if (b.hasOwnProperty(p))
-            d[p] = b[p];
-    function __() {
-        this.constructor = d;
-    }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var Shumway;
-(function (Shumway) {
-    var GFX;
-    (function (GFX) {
-        var Canvas2D;
-        (function (Canvas2D) {
             var assert = Shumway.Debug.assert;
             var Rectangle = Shumway.GFX.Geometry.Rectangle;
             var Point = Shumway.GFX.Geometry.Point;
@@ -12597,61 +13310,84 @@ var Shumway;
                         state.matrix.setElements(scale, 0, 0, scale, region.x - scaledBounds.x, region.y - scaledBounds.y);
                         state.flags |= 64    /* IgnoreNextRenderWithCache */;
                         this._renderer.renderNodeWithState(this._node, state);
-                        state.free();
+                        state.free();    // context.restore();
                     }
                     return mipLevel;
                 };
                 return MipMap;
             }();
             Canvas2D.MipMap = MipMap;
+            var FillRule;
+            (function (FillRule) {
+                FillRule[FillRule['NonZero'] = 0] = 'NonZero';
+                FillRule[FillRule['EvenOdd'] = 1] = 'EvenOdd';
+            }(FillRule = Canvas2D.FillRule || (Canvas2D.FillRule = {})));
             var Canvas2DRendererOptions = function (_super) {
                 __extends(Canvas2DRendererOptions, _super);
                 function Canvas2DRendererOptions() {
-                    _super.apply(this, arguments);
+                    var _this = _super !== null && _super.apply(this, arguments) || this;
                     /**
                      * Whether to force snapping matrices to device pixels.
                      */
-                    this.snapToDevicePixels = true;
+                    _this.snapToDevicePixels = true;
                     /**
                      * Whether to force image smoothing when drawing images.
                      */
-                    this.imageSmoothing = true;
+                    _this.imageSmoothing = true;
                     /**
                      * Whether to enable blending.
                      */
-                    this.blending = true;
+                    _this.blending = true;
                     /**
                      * Whether to enable debugging of layers.
                      */
-                    this.debugLayers = false;
+                    _this.debugLayers = false;
                     /**
                      * Whether to enable masking.
                      */
-                    this.masking = true;
+                    _this.masking = true;
                     /**
                      * Whether to enable filters.
                      */
-                    this.filters = true;
+                    _this.filters = true;
                     /**
                      * Whether to cache shapes as images.
                      */
-                    this.cacheShapes = false;
+                    _this.cacheShapes = false;
                     /**
                      * Shapes above this size are not cached.
                      */
-                    this.cacheShapesMaxSize = 256;
+                    _this.cacheShapesMaxSize = 256;
                     /**
                      * Number of times a shape is rendered before it's elligible for caching.
                      */
-                    this.cacheShapesThreshold = 16;
+                    _this.cacheShapesThreshold = 16;
                     /**
                      * Enables alpha layer for the canvas context.
                      */
-                    this.alpha = false;
+                    _this.alpha = false;
+                    return _this;
                 }
                 return Canvas2DRendererOptions;
             }(GFX.RendererOptions);
             Canvas2D.Canvas2DRendererOptions = Canvas2DRendererOptions;
+            var RenderFlags;
+            (function (RenderFlags) {
+                RenderFlags[RenderFlags['None'] = 0] = 'None';
+                RenderFlags[RenderFlags['IgnoreNextLayer'] = 1] = 'IgnoreNextLayer';
+                RenderFlags[RenderFlags['RenderMask'] = 2] = 'RenderMask';
+                RenderFlags[RenderFlags['IgnoreMask'] = 4] = 'IgnoreMask';
+                RenderFlags[RenderFlags['PaintStencil'] = 8] = 'PaintStencil';
+                RenderFlags[RenderFlags['PaintClip'] = 16] = 'PaintClip';
+                RenderFlags[RenderFlags['IgnoreRenderable'] = 32] = 'IgnoreRenderable';
+                RenderFlags[RenderFlags['IgnoreNextRenderWithCache'] = 64] = 'IgnoreNextRenderWithCache';
+                RenderFlags[RenderFlags['CacheShapes'] = 256] = 'CacheShapes';
+                RenderFlags[RenderFlags['PaintFlashing'] = 512] = 'PaintFlashing';
+                RenderFlags[RenderFlags['PaintBounds'] = 1024] = 'PaintBounds';
+                RenderFlags[RenderFlags['PaintDirtyRegion'] = 2048] = 'PaintDirtyRegion';
+                RenderFlags[RenderFlags['ImageSmoothing'] = 4096] = 'ImageSmoothing';
+                RenderFlags[RenderFlags['PixelSnapping'] = 8192] = 'PixelSnapping';
+            }(RenderFlags = Canvas2D.RenderFlags || (Canvas2D.RenderFlags = {})));
             var MAX_VIEWPORT = Rectangle.createMaxI16();
             /**
              * Render state.
@@ -12659,16 +13395,17 @@ var Shumway;
             var RenderState = function (_super) {
                 __extends(RenderState, _super);
                 function RenderState(target) {
-                    _super.call(this);
-                    this.clip = Rectangle.createEmpty();
-                    this.clipList = [];
-                    this.clipPath = null;
-                    this.flags = 0    /* None */;
-                    this.target = null;
-                    this.matrix = Matrix.createIdentity();
-                    this.colorMatrix = GFX.ColorMatrix.createIdentity();
+                    var _this = _super.call(this) || this;
+                    _this.clip = Rectangle.createEmpty();
+                    _this.clipList = [];
+                    _this.clipPath = null;
+                    _this.flags = 0    /* None */;
+                    _this.target = null;
+                    _this.matrix = Matrix.createIdentity();
+                    _this.colorMatrix = GFX.ColorMatrix.createIdentity();
                     RenderState.allocationCount++;
-                    this.target = target;
+                    _this.target = target;
+                    return _this;
                 }
                 RenderState.prototype.set = function (state) {
                     this.clip.set(state.clip);
@@ -12783,31 +13520,32 @@ var Shumway;
                     if (options === void 0) {
                         options = new Canvas2DRendererOptions();
                     }
-                    _super.call(this, container, stage, options);
-                    this._visited = 0;
-                    this._frameInfo = new FrameInfo();
-                    this._fontSize = 0;
+                    var _this = _super.call(this, container, stage, options) || this;
+                    _this._visited = 0;
+                    _this._frameInfo = new FrameInfo();
+                    _this._fontSize = 0;
                     /**
                      * Stack of rendering layers. Stage video lives at the bottom of this stack.
                      */
-                    this._layers = [];
+                    _this._layers = [];
                     if (container instanceof HTMLCanvasElement) {
                         var canvas = container;
-                        this._viewport = new Rectangle(0, 0, canvas.width, canvas.height);
-                        this._target = this._createTarget(canvas);
+                        _this._viewport = new Rectangle(0, 0, canvas.width, canvas.height);
+                        _this._target = _this._createTarget(canvas);
                     } else {
-                        this._addLayer('Background Layer');
-                        var canvasLayer = this._addLayer('Canvas Layer');
-                        var canvas = document.createElement('canvas');
-                        canvasLayer.appendChild(canvas);
-                        this._viewport = new Rectangle(0, 0, container.scrollWidth, container.scrollHeight);
-                        var self = this;
+                        _this._addLayer('Background Layer');
+                        var canvasLayer = _this._addLayer('Canvas Layer');
+                        var canvas_1 = document.createElement('canvas');
+                        canvasLayer.appendChild(canvas_1);
+                        _this._viewport = new Rectangle(0, 0, container.scrollWidth, container.scrollHeight);
+                        var self_1 = _this;
                         stage.addEventListener(1    /* OnStageBoundsChanged */, function () {
-                            self._onStageBoundsChanged(canvas);
+                            self_1._onStageBoundsChanged(canvas_1);
                         });
-                        this._onStageBoundsChanged(canvas);
+                        _this._onStageBoundsChanged(canvas_1);
                     }
                     Canvas2DRenderer._prepareSurfaceAllocators();
+                    return _this;
                 }
                 Canvas2DRenderer.prototype._addLayer = function (name) {
                     var div = document.createElement('div');
@@ -12886,7 +13624,8 @@ var Shumway;
                         canvas.width = W;
                         canvas.height = H;
                         // Shape caches can be compact since regions are never freed explicitly.
-                        var allocator = allocator = new GFX.RegionAllocator.CompactAllocator(W, H);
+                        // AMBIGUOUS
+                        var allocator = new GFX.RegionAllocator.CompactAllocator(W, H);
                         return new Canvas2D.Canvas2DSurface(canvas, allocator);
                     });
                     Canvas2DRenderer._initializedCaches = true;
@@ -12940,7 +13679,7 @@ var Shumway;
                     var paintStencil = !!(state.flags & 8    /* PaintStencil */);
                     var paintFlashing = !!(state.flags & 512    /* PaintFlashing */);
                     if (!state.hasFlags(256    /* CacheShapes */)) {
-                        return;
+                        return false;
                     }
                     if (paintStencil || paintClip || !state.colorMatrix.isIdentity() || node.hasFlags(256    /* Dynamic */)) {
                         return false;
@@ -13353,7 +14092,7 @@ var Shumway;
                     if (!release) {
                         surface.fill('#FF4981');
                     }
-                    // var color = "rgba(" + (Math.random() * 255 | 0) + ", " + (Math.random() * 255 | 0) + ", " + (Math.random() * 255 | 0) + ", 1)"
+                    // let color = "rgba(" + (Math.random() * 255 | 0) + ", " + (Math.random() * 255 | 0) + ", " + (Math.random() * 255 | 0) + ", 1)"
                     // surface.fill(color);
                     return surface;
                 };
@@ -13431,8 +14170,9 @@ var Shumway;
         var StartState = function (_super) {
             __extends(StartState, _super);
             function StartState() {
-                _super.apply(this, arguments);
-                this._keyCodes = [];
+                var _this = _super !== null && _super.apply(this, arguments) || this;
+                _this._keyCodes = [];
+                return _this;
             }
             StartState.prototype.onMouseDown = function (easel, event) {
                 if (event.altKey) {
@@ -13463,10 +14203,11 @@ var Shumway;
         var PersistentState = function (_super) {
             __extends(PersistentState, _super);
             function PersistentState() {
-                _super.apply(this, arguments);
-                this._keyCodes = [];
-                this._paused = false;
-                this._mousePosition = new Point(0, 0);
+                var _this = _super !== null && _super.apply(this, arguments) || this;
+                _this._keyCodes = [];
+                _this._paused = false;
+                _this._mousePosition = new Point(0, 0);
+                return _this;
             }
             PersistentState.prototype.onMouseMove = function (easel, event) {
                 this._mousePosition = easel.getMousePosition(event, null);
@@ -13497,30 +14238,37 @@ var Shumway;
                 console.info('onKeyPress Code: ' + code);
                 switch (code) {
                 case 248:
+                    // O
                     this._paused = !this._paused;
                     event.preventDefault();
                     break;
                 case 223:
+                    // S
                     easel.toggleOption('paintRenderable');
                     event.preventDefault();
                     break;
                 case 8730:
+                    // V
                     easel.toggleOption('paintViewport');
                     event.preventDefault();
                     break;
                 case 8747:
+                    // B
                     easel.toggleOption('paintBounds');
                     event.preventDefault();
                     break;
                 case 8706:
+                    // D
                     easel.toggleOption('paintDirtyRegion');
                     event.preventDefault();
                     break;
                 case 231:
+                    // C
                     easel.toggleOption('clear');
                     event.preventDefault();
                     break;
                 case 402:
+                    // F
                     easel.toggleOption('paintFlashing');
                     event.preventDefault();
                     break;
@@ -13549,8 +14297,9 @@ var Shumway;
         var MouseDownState = function (_super) {
             __extends(MouseDownState, _super);
             function MouseDownState() {
-                _super.apply(this, arguments);
-                this._startTime = Date.now();
+                var _this = _super !== null && _super.apply(this, arguments) || this;
+                _this._startTime = Date.now();
+                return _this;
             }
             MouseDownState.prototype.onMouseMove = function (easel, event) {
                 if (Date.now() - this._startTime < 10) {
@@ -13570,10 +14319,11 @@ var Shumway;
         var DragState = function (_super) {
             __extends(DragState, _super);
             function DragState(target, startPosition, startMatrix) {
-                _super.call(this);
-                this._target = target;
-                this._startPosition = startPosition;
-                this._startMatrix = startMatrix;
+                var _this = _super.call(this) || this;
+                _this._target = target;
+                _this._startPosition = startPosition;
+                _this._startMatrix = startMatrix;
+                return _this;
             }
             DragState.prototype.onMouseMove = function (easel, event) {
                 event.preventDefault();
@@ -13889,11 +14639,16 @@ var Shumway;
         }();
         GFX.Easel = Easel;
         var Matrix = Shumway.GFX.Geometry.Matrix;
+        var Layout;
+        (function (Layout) {
+            Layout[Layout['Simple'] = 0] = 'Simple';
+        }(Layout = GFX.Layout || (GFX.Layout = {})));
         var TreeRendererOptions = function (_super) {
             __extends(TreeRendererOptions, _super);
             function TreeRendererOptions() {
-                _super.apply(this, arguments);
-                this.layout = 0    /* Simple */;
+                var _this = _super !== null && _super.apply(this, arguments) || this;
+                _this.layout = 0    /* Simple */;
+                return _this;
             }
             return TreeRendererOptions;
         }(GFX.RendererOptions);
@@ -13904,11 +14659,12 @@ var Shumway;
                 if (options === void 0) {
                     options = new TreeRendererOptions();
                 }
-                _super.call(this, container, stage, options);
-                this._canvas = document.createElement('canvas');
-                this._container.appendChild(this._canvas);
-                this._context = this._canvas.getContext('2d');
-                this._listenForContainerSizeChanges();
+                var _this = _super.call(this, container, stage, options) || this;
+                _this._canvas = document.createElement('canvas');
+                _this._container.appendChild(_this._canvas);
+                _this._context = _this._canvas.getContext('2d');
+                _this._listenForContainerSizeChanges();
+                return _this;
             }
             TreeRenderer.prototype._listenForContainerSizeChanges = function () {
                 var pollInterval = 10;
@@ -14364,7 +15120,7 @@ var Shumway;
                     if (asset) {
                         asset.update(pathData, textures, bounds);
                     } else {
-                        var renderable;
+                        var renderable = void 0;
                         if (pathData.morphCoordinates) {
                             renderable = new RenderableMorphShape(id, pathData, textures, bounds);
                         } else {
@@ -14491,11 +15247,23 @@ var Shumway;
                             var type = input.readInt();
                             switch (type) {
                             case Remoting.FilterType.Blur:
-                                filters.push(new BlurFilter(input.readFloat(), input.readFloat(), input.readInt()    // quality
+                                filters.push(new BlurFilter(input.readFloat(), // blurX
+                                input.readFloat(), // blurY
+                                input.readInt()    // quality
 ));
                                 break;
                             case Remoting.FilterType.DropShadow:
-                                filters.push(new DropshadowFilter(input.readFloat(), input.readFloat(), input.readFloat(), input.readFloat(), input.readInt(), input.readFloat(), input.readBoolean(), input.readBoolean(), input.readBoolean(), input.readInt(), input.readFloat()    // strength
+                                filters.push(new DropshadowFilter(input.readFloat(), // alpha
+                                input.readFloat(), // angle
+                                input.readFloat(), // blurX
+                                input.readFloat(), // blurY
+                                input.readInt(), // color
+                                input.readFloat(), // distance
+                                input.readBoolean(), // hideObject
+                                input.readBoolean(), // inner
+                                input.readBoolean(), // knockout
+                                input.readInt(), // quality
+                                input.readFloat()    // strength
 ));
                                 break;
                             case Remoting.FilterType.ColorMatrix:
@@ -14711,7 +15479,7 @@ var Shumway;
                     // Disable all events for right button -- usually it triggers context menu.
                     return;
                 }
-                // var position = this._easel.getMouseWorldPosition(event);
+                // let position = this._easel.getMouseWorldPosition(event);
                 var position = this._easel.getMousePosition(event, this._content);
                 var point = new Point(position.x, position.y);
                 var buffer = new DataBuffer();
@@ -14822,14 +15590,15 @@ var Shumway;
             var WindowEaselHost = function (_super) {
                 __extends(WindowEaselHost, _super);
                 function WindowEaselHost(easel, peer) {
-                    _super.call(this, easel);
-                    this._peer = peer;
-                    this._peer.onSyncMessage = function (msg) {
+                    var _this = _super.call(this, easel) || this;
+                    _this._peer = peer;
+                    _this._peer.onSyncMessage = function (msg) {
                         return this._onWindowMessage(msg, false);
-                    }.bind(this);
-                    this._peer.onAsyncMessage = function (msg) {
+                    }.bind(_this);
+                    _this._peer.onAsyncMessage = function (msg) {
                         this._onWindowMessage(msg, true);
-                    }.bind(this);
+                    }.bind(_this);
+                    return _this;
                 }
                 WindowEaselHost.prototype.onSendUpdates = function (updates, assets) {
                     var bytes = updates.getBytes();
@@ -14948,6 +15717,7 @@ var Shumway;
                         buffer.writeUTF(item);
                         break;
                     default:
+                        // 'object'
                         if (item === null) {
                             buffer.writeByte(MovieRecordObjectType.Null);
                             break;
@@ -14988,6 +15758,16 @@ var Shumway;
                 serialize(obj);
                 return buffer.getBytes();
             }
+            var MovieRecordType;
+            (function (MovieRecordType) {
+                MovieRecordType[MovieRecordType['None'] = 0] = 'None';
+                MovieRecordType[MovieRecordType['PlayerCommand'] = 1] = 'PlayerCommand';
+                MovieRecordType[MovieRecordType['PlayerCommandAsync'] = 2] = 'PlayerCommandAsync';
+                MovieRecordType[MovieRecordType['Frame'] = 3] = 'Frame';
+                MovieRecordType[MovieRecordType['Font'] = 4] = 'Font';
+                MovieRecordType[MovieRecordType['Image'] = 5] = 'Image';
+                MovieRecordType[MovieRecordType['FSCommand'] = 6] = 'FSCommand';
+            }(MovieRecordType = Test.MovieRecordType || (Test.MovieRecordType = {})));
             var MovieRecorder = function () {
                 function MovieRecorder(maxRecordingSize) {
                     this._maxRecordingSize = maxRecordingSize;
@@ -15100,14 +15880,14 @@ var Shumway;
                     return buffer.readUTF();
                 case MovieRecordObjectType.Array:
                     var arr = [];
-                    var length = buffer.readInt();
-                    for (var i = 0; i < length; i++) {
+                    var length_1 = buffer.readInt();
+                    for (var i = 0; i < length_1; i++) {
                         arr[i] = deserializeObjImpl(buffer);
                     }
                     return arr;
                 case MovieRecordObjectType.Object:
                     var obj = {};
-                    var key;
+                    var key = void 0;
                     while (key = buffer.readUTF()) {
                         obj[key] = deserializeObjImpl(buffer);
                     }
@@ -15124,7 +15904,7 @@ var Shumway;
                     return new Int32Array(readUint8Array(buffer).buffer);
                 default:
                     release || Shumway.Debug.assert(false);
-                    break;
+                    return undefined;
                 }
             }
             var MovieRecordParser = function () {
@@ -15221,12 +16001,13 @@ var Shumway;
             var PlaybackEaselHost = function (_super) {
                 __extends(PlaybackEaselHost, _super);
                 function PlaybackEaselHost(easel) {
-                    _super.call(this, easel);
-                    this.ignoreTimestamps = false;
-                    this.alwaysRenderFrame = false;
-                    this.cpuTimeUpdates = 0;
-                    this.cpuTimeRendering = 0;
-                    this.onComplete = null;
+                    var _this = _super.call(this, easel) || this;
+                    _this.ignoreTimestamps = false;
+                    _this.alwaysRenderFrame = false;
+                    _this.cpuTimeUpdates = 0;
+                    _this.cpuTimeRendering = 0;
+                    _this.onComplete = null;
+                    return _this;
                 }
                 Object.defineProperty(PlaybackEaselHost.prototype, 'cpuTime', {
                     get: function () {
@@ -15334,9 +16115,10 @@ var Shumway;
                     if (recordingLimit === void 0) {
                         recordingLimit = 0;
                     }
-                    _super.call(this, easel, peer);
-                    this._recorder = null;
-                    this._recorder = new Test.MovieRecorder(recordingLimit);
+                    var _this = _super.call(this, easel, peer) || this;
+                    _this._recorder = null;
+                    _this._recorder = new Test.MovieRecorder(recordingLimit);
+                    return _this;
                 }
                 Object.defineProperty(RecordingEaselHost.prototype, 'recorder', {
                     get: function () {
@@ -15388,9 +16170,6 @@ var Shumway;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/// <reference path='../../build/ts/base.d.ts' />
-/// <reference path='../../build/ts/tools.d.ts' />
-/// <reference path='../../build/ts/gfx-base.d.ts' />
 /// <reference path='2d/debug.ts'/>
 /// <reference path='2d/surface.ts'/>
 /// <reference path='2d/2d.ts'/>

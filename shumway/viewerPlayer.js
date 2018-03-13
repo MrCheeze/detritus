@@ -17,11 +17,11 @@
 var release = true;
 
 var viewerPlayerglobalInfo = {
-  abcs: "playerglobal.abcs",
-  catalog: "playerglobal.json"
+  abcs: "../build/playerglobal/playerglobal.abcs",
+  catalog: "../build/playerglobal/playerglobal.json"
 };
 
-var builtinPath = "builtin.abc";
+var builtinPath = "../build/libs/builtin.abc";
 
 window.print = function (msg) {
   console.log(msg);
