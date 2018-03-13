@@ -21,7 +21,7 @@ var viewerPlayerglobalInfo = {
   catalog: "../build/playerglobal/playerglobal.json"
 };
 
-var builtinPath = "../build/libs/builtin.abc";
+var builtinPath = "builtin.abc";
 
 window.print = function (msg) {
   console.log(msg);
