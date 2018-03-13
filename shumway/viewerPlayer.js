@@ -17,8 +17,8 @@
 var release = true;
 
 var viewerPlayerglobalInfo = {
-  abcs: "../build/playerglobal/playerglobal.abcs",
-  catalog: "../build/playerglobal/playerglobal.json"
+  abcs: "playerglobal.abcs",
+  catalog: "playerglobal.json"
 };
 
 var builtinPath = "builtin.abc";
