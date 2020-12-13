@@ -4,8 +4,8 @@
 <script>
     window.RufflePlayer = window.RufflePlayer || {};
     window.RufflePlayer.config = {
-        "publicPath": "ruffle_nightly_2020_12_12_selfhosted/",
         "polyfills": false,
+		"autoplay": "off"
     };
     window.addEventListener("load", (event) => {
         const ruffle = window.RufflePlayer.newest();
@@ -13,13 +13,28 @@
         const container = document.getElementById("ruffleContainer");
         container.appendChild(player);
         player.load("A6A6I1.swf");
+		
+		document.querySelector('ruffle-player').shadowRoot.styleSheets[0].addRule('#play_button', 'display: none !important;');
+		pause();
     });
+
+	function play() {
+		document.querySelector("ruffle-player").play();
+		document.getElementById("flash").Play();
+	}
+	function pause() {
+		document.querySelector("ruffle-player").pause();
+		document.getElementById("flash").StopPlay();
+	}
 </script>
 <script src="ruffle_nightly_2020_12_12_selfhosted/ruffle.js"></script>
 <style>
 ruffle-player {
 	width: 950px;
 	height: 750px;
+}
+ruffle-player::shadow #play_button {
+	visibility: hidden;
 }
 </style>
 </head>
@@ -28,11 +43,13 @@ ruffle-player {
 	<tr><td>Flash Player:</td><td>Ruffle:</td></tr>
 	<tr>
 	<td>
-	<embed src="A6A6I1.swf" width="950" height="750"/>
+	<embed src="A6A6I1.swf" width="950" height="750" id="flash"/>
 	</td>
 	<td id="ruffleContainer">
 	</td>
 	</tr>
 	</table>
+	<a href="javascript:play();">Play</a>
+	<a href="javascript:pause();">Pause</a>
 </body>
 </html>
