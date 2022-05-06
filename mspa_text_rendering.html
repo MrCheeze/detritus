@@ -13,7 +13,11 @@ body {
 div {
 	margin-left: 22px;
 	margin-right: 22px;
-	opacity: 0.98; /* disable subpixel rendering in firefox */
+}
+@-moz-document url-prefix() {
+	div {
+		opacity: 0.98; /* hack to disable subpixel rendering in firefox only */
+	}
 }
 p {
 	margin-top: 17px;
