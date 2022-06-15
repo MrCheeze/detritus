@@ -1,0 +1,74 @@
+<pre>Ocarina of Time Master Quest - Rom Write Helper
+
+N64 rom address to edit (hex32): <input onkeyup="n64rom(this.value);" id="hi">
+
+value at GC address <span id="foo1">?</span> (hex16): <input id="lo1" onkeyup="changeLo1(this.value);"> - OR - value at N64 address <span id="foo2">?</span> (binary16): <input id="lo2" onkeyup="changeLo2(this.value);">
+
+GC address to edit: <span id="bar1">?</span> --- N64 address to edit: <span id="bar2">?</span>
+<script>
+function addrToBinary(addr) {
+	if (addr < 0) {
+		addr += 0x100000000;
+	}
+	s = addr.toString(2);
+	while (s.length < 32) {
+		s = "0" + s;
+	}
+	return s.substr(0,4) + " " +
+			s.substr(4,4) + " " +
+			s.substr(8,4) + " " +
+			s.substr(12,4) + "  " +
+			s.substr(16,4) + " " +
+			s.substr(20,4) + " " +
+			s.substr(24,4) + " " +
+			s.substr(28,4);
+}
+function n64rom(addrStr) {
+	parsedAddrStr = parseInt(addrStr, 16);
+	if (isNaN(parsedAddrStr)) {
+		document.getElementById("foo1").innerHTML = "?";
+		document.getElementById("foo2").innerHTML = "?";
+		return;
+	}
+	tableAddr = ((parsedAddrStr >> 13) << 4) + 0x80AF6E30 + 2;
+	document.getElementById("foo1").innerHTML = tableAddr.toString(16).toUpperCase();
+	document.getElementById("foo2").innerHTML = addrToBinary(tableAddr - 0xB1C140);
+}
+
+function changeLo1(val) {
+	val = parseInt(val, 16);
+	if (!isNaN(val)) {
+		document.getElementById("lo2").value = val.toString(2);
+	}
+	tableValue(val);
+}
+function changeLo2(val) {
+	val = parseInt(val.replaceAll(" ",""), 2);
+	if (!isNaN(val)) {
+		document.getElementById("lo1").value = val.toString(16).toUpperCase();
+	}
+	tableValue(val);
+}
+function tableValue(val) {
+	if (isNaN(val)) {
+		document.getElementById("bar1").innerHTML = "?";
+		document.getElementById("bar2").innerHTML = "?";
+		return
+	}
+	if (val >= 0x8000) {
+		document.getElementById("bar1").innerHTML = "NOT LOADED";
+		document.getElementById("bar2").innerHTML = "NOT LOADED";
+		return;
+	}
+	gcAddr = 0x80F1C160 + (val * 0x2000) + (parsedAddrStr & 0x1FFF);
+	document.getElementById("bar1").innerHTML = gcAddr.toString(16).toUpperCase();
+	document.getElementById("bar2").innerHTML = addrToBinary(gcAddr - 0xB1C140);
+}
+n64rom(document.getElementById("hi").value);
+changeLo1(document.getElementById("lo1").value);
+</script>
+
+-------------------------------------------
+CD1768
+CC45FA
+CC4618
