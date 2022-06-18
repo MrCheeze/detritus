@@ -1,10 +1,10 @@
 <pre>Ocarina of Time Master Quest - Rom Write Helper
 
-N64 rom address to edit (hex32): <input onkeyup="n64rom(this.value);" id="hi">
+1. N64 rom address to edit (hex32): <input onkeyup="n64rom(this.value);" id="hi">
 
-<span style="display:none">value at GC address <span id="foo1">?</span> </span>value at N64 address <span id="foo2">?</span>: (hex16): <input id="lo1" onkeyup="changeLo1(this.value);"> or (binary16): <input id="lo2" onkeyup="changeLo2(this.value);">
+2. <span style="display:none">value at GC address <span id="foo1">?</span> </span>value at N64 address <span id="foo2">?</span>: (hex16): <input id="lo1" onkeyup="changeLo1(this.value);"> or (binary16): <input id="lo2" onkeyup="changeLo2(this.value);">
 
-<span style="display:none">GC address to edit: <span id="bar1">?</span> --- </span>N64 address to edit: <span id="bar2">?</span>
+3. <span style="display:none">GC address to edit: <span id="bar1">?</span> --- </span>N64 address to edit: <span id="bar2">?</span>
 <script>
 function addrToBinary(addr) {
 	if (addr < 0) {
