@@ -14,14 +14,14 @@ function addrToBinary(addr) {
 	while (s.length < 32) {
 		s = "0" + s;
 	}
-	return s.substr(0,4) + " " +
+	return addr.toString(16).toUpperCase() + " (" + s.substr(0,4) + " " +
 			s.substr(4,4) + " " +
 			s.substr(8,4) + " " +
 			s.substr(12,4) + "  " +
 			s.substr(16,4) + " " +
 			s.substr(20,4) + " " +
 			s.substr(24,4) + " " +
-			s.substr(28,4);
+			s.substr(28,4) + ")";
 }
 function n64rom(addrStr) {
 	parsedAddrStr = parseInt(addrStr, 16);
