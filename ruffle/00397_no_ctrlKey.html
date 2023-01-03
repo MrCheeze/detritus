@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+	white-space: nowrap;
+	min-width: calc(950px + 200px);
+}
+.links {
+	position: relative;
+	width: 200px;
+	z-index: 1000;
+}
+.links a {
+	display: block;
+}
+div {
+	display: block;
+	vertical-align: top;
+}
+span {
+	display: block;
+}
+ruffle-player, embed {
+	border: 1px solid black;
+}
+div.sticky {
+	position: fixed;
+	top: 8px;
+	width: 100%;
+	min-width: calc(950px + 400px);
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+</style>
+<script>
+	window.RufflePlayer = window.RufflePlayer || {};
+	window.RufflePlayer.config = {
+		"polyfills": false,
+		"autoplay": "on",
+		"letterbox": "off",
+		"unmuteOverlay": "hidden"
+	};
+	window.addEventListener("load", (event) => {
+		const ruffle = window.RufflePlayer.newest();
+		window.player = ruffle.createPlayer();
+		const container = document.getElementById("ruffleContainer");
+		container.appendChild(window.player);
+		
+		if (window.location.hash && window.location.hash.length > 1) {
+			load.apply(null, window.location.hash.replace('#','').split(','));
+		} else {
+			load('00397_no_ctrlKey');
+		}
+		
+		document.querySelector('ruffle-player').shadowRoot.styleSheets[0].addRule('#play_button', 'display: none !important;'); // hack
+	});
+	function load(swfname, width, height) {
+		if (!width) {width=650;} else {width=parseInt(width,10);}
+		if (!height) {height=450;} else {height=parseInt(height,10);}
+		console.log(swfname, width, height);
+		console.log(arguments);
+		const fullUrl = swfname+".swf";
+		document.getElementById("download").href=fullUrl;
+		
+		window.player.load(fullUrl);
+		window.player.style.width=width+'px';
+		window.player.style.height=height+'px';
+		
+		//document.getElementById("flashPlayer").outerHTML = '<embed id="flashPlayer" src="'+fullUrl+'" width="'+width+'" height="'+height+'" style="display:block;width:'+width+';height:'+height+';">'
+		//document.getElementById("flashPlayer").style.width=width+'px';
+		//document.getElementById("flashPlayer").style.height=height+'px';
+		
+		document.querySelector("a[href*='"+swfname+"']").style.fontWeight = 'bold';
+	}
+
+	function play() {
+		document.querySelector("ruffle-player").play();
+		//document.getElementById("flashPlayer").Play();
+	}
+	function pause() {
+		document.querySelector("ruffle-player").pause();
+		//document.getElementById("flashPlayer").StopPlay();
+	}
+	function forward(n) {
+		var is_playing = document.querySelector("ruffle-player").contextMenuItems().filter(x => x && x.text=="Play").length == 0;
+		document.querySelector("ruffle-player").contextMenuItems().forEach(item => {
+			if (item && item.text=="Forward") {
+				for (var i=0; i<n; i++) {
+					item.onClick();
+				}
+			}
+		});
+		if (is_playing) {
+			document.querySelector("ruffle-player").contextMenuItems().forEach(item => {
+				if (item && item.text=="Play") {
+					item.onClick();
+				}
+			});
+		}
+	}
+	function back(n) {
+		var is_playing = document.querySelector("ruffle-player").contextMenuItems().filter(x => x && x.text=="Play").length == 0;
+		document.querySelector("ruffle-player").contextMenuItems().forEach(item => {
+			if (item && item.text=="Back") {
+				for (var i=0; i<n; i++) {
+					item.onClick();
+				}
+			}
+		});
+		if (is_playing) {
+			document.querySelector("ruffle-player").contextMenuItems().forEach(item => {
+				if (item && item.text=="Play") {
+					item.onClick();
+				}
+			});
+		}
+	}
+</script>
+<script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+</head>
+<body>
+
+<div class="sticky">
+<span id="ruffleContainer"></span>
+<span>
+<a id="download">Download</a>
+</span>
+</div>
+
+<!--<div class="sticky">
+<embed id="flashPlayer"/>
+</div>-->
+
+</body>
+</html>
